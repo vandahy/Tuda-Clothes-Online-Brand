@@ -1,4 +1,4 @@
-package chubby.teu.tuda.demo;
+package chubby.teu.tuda;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
