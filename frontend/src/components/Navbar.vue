@@ -2,7 +2,7 @@
   <header>
     <nav class="navbar">
       <a href="/">
-        <img class="logo" src="/src/assets/images/logo.png" alt="Logo">
+        <img class="logo w-1/3 flex justify-center" src="/src/assets/images/logo.png" alt="Logo">
       </a>
       <ul class="navbar-ul">
         <li class="dropdown">
@@ -20,7 +20,11 @@
         <li><a class="a-nav" href="">CONTACT US</a></li>
       </ul>    
     </nav>
-    <div class="menu-icon">
+    <div class="menu-icon flex">
+      <i class="fa-solid fa-cart-shopping c515151" id="menu-icon" @click="toggleSidebar"></i>
+      <router-link to="/login">
+        <i class="fa-solid fa-user c515151" id="menu-icon"></i>
+      </router-link>
       <i class="fa-solid fa-bars" id="menu-icon" @click="toggleSidebar"></i>
     </div>
     <!-- Sidebar Menu -->
@@ -45,13 +49,6 @@
       </ul>
     
       <!-- Nút Giỏ Hàng -->
-      <a href="#cart">
-        <i class="fa-solid fa-cart-shopping"></i>
-      </a>
-    
-      <!-- Nút Login -->
-      <a href="login.html" class="login-btn a-menu">Login</a>
-      <a href="#signup" class="login-btn a-menu">Sign up</a>
     </div>
   </header>
 </template>
