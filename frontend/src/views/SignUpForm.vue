@@ -44,7 +44,7 @@
       <!-- Nút đăng ký -->
       <button type="submit" class="btn-submit">Đăng ký</button>
       <router-link to="/login" class="move-login c-black">
-          Bạn đã có tài khoản? Đăng ký ngay
+          Bạn đã có tài khoản? Đăng nhập ngay
       </router-link>
     </form>
   </div>
