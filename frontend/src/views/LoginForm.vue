@@ -1,6 +1,6 @@
 <template>
   <div class="register-container c-black">
-    <h2 class="title">Đăng ký</h2>
+    <h2 class="title">Đăng nhập</h2>
     <form class="register-form">
       <!-- Họ và tên -->
       <div class="form-group">
@@ -18,7 +18,7 @@
       <!-- Nút đăng ký -->
       <button type="submit" class="btn-submit">Đăng ký</button>
       <router-link to="/signup" class="move-sign-up c-black">
-          Bạn đã có tài khoản? Đăng nhập ngay
+          Bạn đã có tài khoản? Đăng ký ngay
       </router-link>
     </form>
   </div>
