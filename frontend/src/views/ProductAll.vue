@@ -48,7 +48,7 @@ const products = ref([]);
 const searchKeyword = ref("");
 const filter = ref("all");
 const page = ref(0);
-const size = ref(10); // mỗi trang 10 sản phẩm (2 hàng x 5 cột)
+const size = ref(10);
 const hasNext = ref(false);
 
 const fetchProducts = async () => {
@@ -62,7 +62,7 @@ const fetchProducts = async () => {
   } else {
     switch (filter.value) {
       case "all":
-        url = `/api/products/page${params}`; // <-- Sửa ở đây
+        url = `/api/products/page${params}`;
         break;
       case "new":
         url = `/api/products/new${params}`;
@@ -91,7 +91,6 @@ const fetchProducts = async () => {
     const res = await fetch(url);
     if (!res.ok) throw new Error("Lỗi khi lấy sản phẩm");
     const data = await res.json();
-    console.log("DATA:", data);
     products.value = Array.isArray(data) ? data : data.content || [];
     hasNext.value = data.totalPages ? page.value < data.totalPages - 1 : false;
   } catch (e) {
@@ -140,6 +139,12 @@ onMounted(() => {
 }
 .search-input {
   flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+.price-input {
+  width: 120px;
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #e0e0e0;
@@ -200,14 +205,14 @@ onMounted(() => {
 }
 
 @media (max-width: 1024px) {
-  .product-grid {
-    grid-template-columns: repeat(3, 1fr); /* 3 sản phẩm mỗi hàng trên tablet */
+  .product-all-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 600px) {
-  .product-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 sản phẩm mỗi hàng trên mobile */
+  .product-all-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 </style>
