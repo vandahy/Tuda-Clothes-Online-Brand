@@ -1,0 +1,31 @@
+package chubby.teu.tuda.controller;
+
+import chubby.teu.tuda.dto.login.LoginRequest;
+import chubby.teu.tuda.dto.login.LoginResponse;
+import chubby.teu.tuda.service.LoginService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api")
+public class LoginController {
+    @Autowired
+    private LoginService userService;
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
+        boolean success = userService.checkLogin(loginRequest.getUsername(), loginRequest.getPassword());
+
+        if (success) {
+            return ResponseEntity.ok(new LoginResponse(true, "Login successful"));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new LoginResponse(false, "Invalid credentials"));
+        }
+    }
+
+}
