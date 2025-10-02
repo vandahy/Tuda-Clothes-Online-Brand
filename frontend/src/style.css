@@ -5,7 +5,7 @@
 }
 
 body {
-    background-color: #DFDFDF;
+    /* background-color: #DFDFDF; */
     color: #515151;
     font-family: "Jockey One", serif;
     font-weight: 400;
@@ -24,22 +24,14 @@ header {
     z-index: 1000;
     padding: 5px 0px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    top: 0;
+    left: 0;
+    right: 0;
 }
 
-html,
-body {
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-}
-
-img {
-    width: 100%;
-    height: auto;
-}
-
-/* Toàn bộ thanh cuộn */
-::-webkit-scrollbar {
-    width: 6px;
+.v-main {
+    padding-top: 80px;
+    /* adjust to match header height */
 }
 
 ::-webkit-scrollbar-track {
@@ -676,3 +668,172 @@ footer {
 .c515151 {
     color: #515151;
 }
+
+.c-black {
+    color: black;
+}
+
+.t-bold {
+    font-weight: bold;
+}
+
+/* Sign Up */
+.register-container {
+    max-width: 500px;
+    margin: 90px auto;
+    padding: 20px;
+}
+
+.title {
+    font-family: 'Futura6', sans-serif;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-family: 'Futura6', sans-serif;
+    margin-bottom: 5px;
+    font-size: 15px;
+}
+
+input,
+select {
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+input:focus,
+select:focus {
+    border-color: black;
+    outline: none;
+}
+
+.btn-submit {
+    padding: 17px;
+    background: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.btn-submit:hover {
+    background: #333;
+}
+
+.move-login,
+.move-sign-up {
+    display: block;
+    font-family: 'Futura6', sans-serif;
+    text-align: center;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Sign Up */
+
+/* Slidebar-cart */
+.sidebar-cart {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    /* ẩn đi ban đầu */
+    width: 400px;
+    height: 100%;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: 0.3s ease;
+    z-index: 999;
+    background-color: white;
+    overflow-y: auto;
+}
+
+.sidebar-cart.open {
+    right: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.cart-item {
+    display: flex;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.cart-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.cart-info {
+    flex: 1;
+}
+
+.cart-info h4 {
+    margin: 0 0 5px;
+    font-size: 16px;
+}
+
+.cart-info p {
+    margin: 2px 0;
+    font-size: 14px;
+}
+
+.quantity {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.quantity button {
+    background: #f2f2f2;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.quantity span {
+    margin: 0 10px;
+}
+
+.checkout {
+    padding: 20px;
+    text-align: center;
+    background: black;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Slidebar-cart */
