@@ -8,7 +8,9 @@
         <li class="dropdown">
           <a class="a-nav" href="">SHOP</a>
           <ul class="submenu">
-            <li><a href="#">All</a></li>
+            <li>
+              <router-link class="a-nav" to="/products">All</router-link>
+            </li>
             <li><a href="#">T-Shirts</a></li>
             <li><a href="#">Pants</a></li>
             <li><a href="#">Outerwears</a></li>

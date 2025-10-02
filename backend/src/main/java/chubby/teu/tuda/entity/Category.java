@@ -1,5 +1,6 @@
 package chubby.teu.tuda.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,7 +35,7 @@ public class Category {
     
     @Column(name = "updatedAt")
     private LocalDateTime updatedAt = LocalDateTime.now();
-    
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products;
     

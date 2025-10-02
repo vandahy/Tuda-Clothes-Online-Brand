@@ -18,10 +18,12 @@ public class CartItem {
     private CartItemId id;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("cartCode") // liên kết với field cartCode trong CartItemId
     @JoinColumn(name = "cartCode", nullable = false)
     private Cart cart;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("productCode") // liên kết với field productCode trong CartItemId
     @JoinColumn(name = "productCode", nullable = false)
     private Product product;
     
