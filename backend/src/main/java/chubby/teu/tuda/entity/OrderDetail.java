@@ -18,10 +18,12 @@ public class OrderDetail {
     private OrderDetailId id;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("orderCode") // ánh xạ với field orderCode trong OrderDetailId
     @JoinColumn(name = "orderCode", nullable = false)
     private Order order;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @MapsId("productCode") // ánh xạ với field productCode trong OrderDetailId
     @JoinColumn(name = "productCode", nullable = false)
     private Product product;
     

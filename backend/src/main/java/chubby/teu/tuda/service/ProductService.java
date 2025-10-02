@@ -1,6 +1,8 @@
 package chubby.teu.tuda.service;
 
+import chubby.teu.tuda.dto.ProductDTO;
 import chubby.teu.tuda.entity.Product;
+import chubby.teu.tuda.mapper.ProductMapper;
 import chubby.teu.tuda.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -19,64 +22,75 @@ public class ProductService {
     /**
      * Lấy tất cả sản phẩm
      */
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductDTO> getAllProducts() {
+        return productRepository.findAll()
+                .stream()
+                .map(ProductMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     /**
      * Lấy sản phẩm phân trang
      */
-    public Page<Product> getAllProducts(Pageable pageable) {
-        return productRepository.findAll(pageable);
+    public Page<ProductDTO> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(ProductMapper :: toDTO);
     }
 
     /**
      * Lấy sản phẩm theo mã
      */
-    public Optional<Product> getProductByCode(String productCode) {
-        return productRepository.findByProductCode(productCode);
+    public Optional<ProductDTO> getProductByCode(String productCode) {
+        return productRepository.findByProductCode(productCode)
+                .map(ProductMapper::toDTO);
     }
 
     /**
      * Tìm kiếm sản phẩm theo tên (keyword)
      */
-    public Page<Product> searchProducts(String keyword, Pageable pageable) {
-        return productRepository.findByKeyword(keyword, pageable);
+    public Page<ProductDTO> searchProducts(String keyword, Pageable pageable) {
+        return productRepository.findByKeyword(keyword, pageable)
+                .map(ProductMapper :: toDTO);
     }
 
     /**
      * Lấy sản phẩm theo danh mục
      */
-    public Page<Product> getProductsByCategory(String categoryCode, Pageable pageable) {
-        return productRepository.findByCategoryCategoryCode(categoryCode, pageable);
+    public Page<ProductDTO> getProductsByCategory(String categoryCode, Pageable pageable) {
+        return productRepository.findByCategoryCategoryCode(categoryCode, pageable)
+                .map(ProductMapper::toDTO);
     }
 
     /**
      * Lấy sản phẩm theo khoảng giá
      */
-    public Page<Product> getProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
-        return productRepository.findByPriceRange(minPrice, maxPrice, pageable);
+    public Page<ProductDTO> getProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
+        return productRepository.findByPriceRange(minPrice, maxPrice, pageable)
+                .map(ProductMapper::toDTO);
     }
 
     /**
      * Lấy sản phẩm bán chạy
      */
-    public Page<Product> getBestSellingProducts(Pageable pageable) {
-        return productRepository.findBestSellingProducts(pageable);
+    public Page<ProductDTO> getBestSellingProducts(Pageable pageable) {
+        return productRepository.findBestSellingProducts(pageable)
+                .map(ProductMapper::toDTO);
     }
 
     /**
      * Lấy sản phẩm giảm giá
      */
-    public Page<Product> getDiscountedProducts(Pageable pageable) {
-        return productRepository.findDiscountedProducts(pageable);
+    public Page<ProductDTO> getDiscountedProducts(Pageable pageable) {
+        return productRepository.findDiscountedProducts(pageable)
+                .map(ProductMapper::toDTO);
     }
 
     /**
      * Lấy sản phẩm mới
      */
-    public Page<Product> getNewProducts(Pageable pageable) {
-        return productRepository.findNewProducts(pageable);
+    public Page<ProductDTO> getNewProducts(Pageable pageable) {
+        return productRepository.findNewProducts(pageable)
+                .map(ProductMapper::toDTO);
     }
 
     /**
