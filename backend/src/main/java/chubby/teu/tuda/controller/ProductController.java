@@ -1,5 +1,8 @@
 package chubby.teu.tuda.controller;
+
+import chubby.teu.tuda.dto.ProductDTO;
 import chubby.teu.tuda.entity.Product;
+import chubby.teu.tuda.mapper.ProductMapper;
 import chubby.teu.tuda.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/products")
 
@@ -23,13 +27,13 @@ public class ProductController {
      * Lấy danh sách tất cả sản phẩm (hoặc phân trang nếu có param page, size)
      */
     @GetMapping
-    public List<Product> getAllProducts() {
+    public List<ProductDTO> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("/page")
-    public Page<Product> getAllProductsPage(@RequestParam(defaultValue = "0") int page,
-                                            @RequestParam(defaultValue = "10") int size) {
+    public Page<ProductDTO> getAllProductsPage(@RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "10") int size) {
         return productService.getAllProducts(PageRequest.of(page, size));
     }
 
@@ -37,7 +41,7 @@ public class ProductController {
      * Lấy sản phẩm theo mã
      */
     @GetMapping("/{code}")
-    public Optional<Product> getProductByCode(@PathVariable("code") String productCode) {
+    public Optional<ProductDTO> getProductByCode(@PathVariable("code") String productCode) {
         return productService.getProductByCode(productCode);
     }
 
@@ -45,9 +49,9 @@ public class ProductController {
      * Tìm kiếm sản phẩm theo tên
      */
     @GetMapping("/search")
-    public Page<Product> searchProducts(@RequestParam String keyword,
-                                        @RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "10") int size) {
+    public Page<ProductDTO> searchProducts(@RequestParam String keyword,
+                                           @RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size) {
         return productService.searchProducts(keyword, PageRequest.of(page, size));
     }
 
@@ -55,9 +59,9 @@ public class ProductController {
      * Lấy sản phẩm theo danh mục
      */
     @GetMapping("/category/{categoryCode}")
-    public Page<Product> getProductsByCategory(@PathVariable String categoryCode,
-                                               @RequestParam(defaultValue = "0") int page,
-                                               @RequestParam(defaultValue = "10") int size) {
+    public Page<ProductDTO> getProductsByCategory(@PathVariable String categoryCode,
+                                                  @RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size) {
         return productService.getProductsByCategory(categoryCode, PageRequest.of(page, size));
     }
 
@@ -65,10 +69,10 @@ public class ProductController {
      * Lấy sản phẩm theo khoảng giá
      */
     @GetMapping("/price")
-    public Page<Product> getProductsByPriceRange(@RequestParam BigDecimal min,
-                                                 @RequestParam BigDecimal max,
-                                                 @RequestParam(defaultValue = "0") int page,
-                                                 @RequestParam(defaultValue = "10") int size) {
+    public Page<ProductDTO> getProductsByPriceRange(@RequestParam BigDecimal min,
+                                                    @RequestParam BigDecimal max,
+                                                    @RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "10") int size) {
         return productService.getProductsByPriceRange(min, max, PageRequest.of(page, size));
     }
 
@@ -76,8 +80,8 @@ public class ProductController {
      * Lấy sản phẩm bán chạy
      */
     @GetMapping("/best-selling")
-    public Page<Product> getBestSellingProducts(@RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "10") int size) {
+    public Page<ProductDTO> getBestSellingProducts(@RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size) {
         return productService.getBestSellingProducts(PageRequest.of(page, size));
     }
 
@@ -85,8 +89,8 @@ public class ProductController {
      * Lấy sản phẩm giảm giá
      */
     @GetMapping("/discounted")
-    public Page<Product> getDiscountedProducts(@RequestParam(defaultValue = "0") int page,
-                                               @RequestParam(defaultValue = "10") int size) {
+    public Page<ProductDTO> getDiscountedProducts(@RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size) {
         return productService.getDiscountedProducts(PageRequest.of(page, size));
     }
 
@@ -94,8 +98,8 @@ public class ProductController {
      * Lấy sản phẩm mới
      */
     @GetMapping("/new")
-    public Page<Product> getNewProducts(@RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "10") int size) {
+    public Page<ProductDTO> getNewProducts(@RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size) {
         return productService.getNewProducts(PageRequest.of(page, size));
     }
 
