@@ -21,14 +21,20 @@ const routes = [
         path: '/products',
         name: 'ProductAll',
         component: () => import('../views/ProductAll.vue')
+    },
+    {
+        path: '/account',
+        name: 'Account',
+        component: () => import('../views/AccountManagement.vue')
     }
 ]
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
-    scrollBehavior() {
-        document.getElementById('app').scrollIntoView();
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) return savedPosition
+        return { left: 0, top: 0 }
     }
 })
 
