@@ -1,35 +1,35 @@
 <template>
   <div class="register-container c-black">
-    <h2 class="title">Đăng ký</h2>
+    <h2 class="title">Sign Up</h2>
     <form class="register-form" @submit.prevent="logup">
       <!-- Họ và tên -->
       <div class="form-group">
-        <label>Họ và tên *</label>
-        <input type="text" v-model="fullName" placeholder="Nhập họ tên tại đây" required />
+        <label>Name *</label>
+        <input type="text" v-model="fullName" placeholder="Enter your name" required />
       </div>
 
       <!-- Số điện thoại -->
       <div class="form-group">
-        <label>Số điện thoại *</label>
-        <input type="text" v-model="phone" placeholder="Nhập số điện thoại tại đây" required />
+        <label>Phone Number *</label>
+        <input type="text" v-model="phone" placeholder="Enter your phone number" required />
       </div>
 
       <!-- Email -->
       <div class="form-group">
         <label>Email *</label>
-        <input type="email" v-model="email" placeholder="Thông tin này cần bắt buộc" required />
+        <input type="email" v-model="email" placeholder="This field is required" required />
       </div>
 
       <!-- Mật khẩu -->
       <div class="form-group">
-        <label>Mật khẩu *</label>
-        <input type="password" v-model="password" placeholder="Mật khẩu" required />
+        <label>Password *</label>
+        <input type="password" v-model="password" placeholder="Enter your phone password" required />
       </div>
 
       <!-- Nút đăng ký -->
-      <button type="submit" class="btn-submit">Đăng ký</button>
+      <button type="submit" class="btn-submit">Sign Up</button>
       <router-link to="/login" class="move-login c-black">
-          Bạn đã có tài khoản? Đăng nhập ngay
+          Already have an account? Log in now
       </router-link>
     </form>
   </div>
