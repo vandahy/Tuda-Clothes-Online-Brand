@@ -293,10 +293,10 @@ nav ul li {
 }
 
 .product-carousel .image-container:hover img {
-    transform: scale(1.05);
+    transform: scale(1);    
 }
 
-.product-carousel .hover-img {
+/* .product-carousel .hover-img {
     visibility: hidden;
     opacity: 0;
 }
@@ -309,7 +309,7 @@ nav ul li {
 .product-carousel .image-container:hover .default-img {
     visibility: hidden;
     opacity: 0;
-}
+} */
 
 .product-carousel .product-item h2 {
     font-size: 16px;
@@ -353,6 +353,7 @@ nav ul li {
 footer {
     display: flex;
     flex-direction: column;
+    background: #D9D9D9;
 }
 
 .copyright {
@@ -373,7 +374,7 @@ footer {
 }
 
 .logofooter-container img {
-    width: 200px;
+    width: 150px;
     height: auto;
 }
 

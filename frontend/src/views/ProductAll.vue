@@ -24,6 +24,7 @@
         class="product-item"
         v-for="product in products"
         :key="product.productCode"
+        @click="goToDetail(product.productCode)"
       >
         <img
           :src="product.imageUrl || '/src/assets/images/products/tsh1.jpg'"
@@ -43,13 +44,20 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-
+import { useRouter } from "vue-router";
 const products = ref([]);
 const searchKeyword = ref("");
 const filter = ref("all");
 const page = ref(0);
 const size = ref(10);
 const hasNext = ref(false);
+
+
+const router = useRouter();
+
+const goToDetail = (code) => {
+  router.push({ name: "ProductDetail", params: { code } });
+};
 
 const fetchProducts = async () => {
   let url = "";

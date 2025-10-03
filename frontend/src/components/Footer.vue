@@ -1,8 +1,8 @@
 <template>
-  <div class="logofooter-container">
-    <img src="/src/assets/images/logo.png" alt="Logo">
-  </div>
   <footer>
+    <div class="logofooter-container">
+      <img src="/src/assets/images/logo.png" alt="Logo" />
+    </div>
     <div class="footer-container">
       <div class="infomation">
         <h1 class="in4">Infomation</h1>
@@ -21,9 +21,16 @@
 
       <div class="Follow-us">
         <h1 class="social">Follow Us On</h1>
-        <a href="https://www.facebook.com/dihat77"><i class="fa-brands fa-facebook"></i></a>
-        <a href="https://www.instagram.com/onlydihat07/"><i class="fa-brands fa-square-instagram"></i></a>
-        <a href="https://www.tiktok.com/@07july.dihat?is_from_webapp=1&sender_device=pc"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="https://www.facebook.com/dihat77"
+          ><i class="fa-brands fa-facebook"></i
+        ></a>
+        <a href="https://www.instagram.com/onlydihat07/"
+          ><i class="fa-brands fa-square-instagram"></i
+        ></a>
+        <a
+          href="https://www.tiktok.com/@07july.dihat?is_from_webapp=1&sender_device=pc"
+          ><i class="fa-brands fa-tiktok"></i
+        ></a>
       </div>
     </div>
     <div class="copyright">
