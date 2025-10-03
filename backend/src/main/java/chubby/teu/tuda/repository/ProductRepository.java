@@ -38,7 +38,8 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findByPriceRange(@Param("minPrice") BigDecimal minPrice, 
                                    @Param("maxPrice") BigDecimal maxPrice, 
                                    Pageable pageable);
-    
+
+
     /**
      * Lấy sản phẩm bán chạy (dựa trên số lượng đã bán từ OrderDetail)
      */
