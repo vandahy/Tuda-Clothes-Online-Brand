@@ -105,7 +105,6 @@ onUnmounted(() => {
 .product-item {
   background: #f7f7f7;
   border-radius: 10px;
-  padding: 15px;
   text-align: center;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
   min-width: 0;

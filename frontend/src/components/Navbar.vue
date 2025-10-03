@@ -1,9 +1,10 @@
 <template>
   <header>
+
     <nav class="navbar">
-      <a href="/">
+      <router-link to="/">
         <img class="logo w-1/3 flex justify-center" src="/src/assets/images/logo.png" alt="Logo">
-      </a>
+      </router-link>
       <ul class="navbar-ul">
         <li class="dropdown">
           <a class="a-nav" href="">SHOP</a>
@@ -22,13 +23,15 @@
         <li><a class="a-nav" href="">CONTACT US</a></li>
       </ul>    
     </nav>
+
     <div class="menu-icon flex">
       <i class="fa-solid fa-cart-shopping c515151" id="menu-icon" @click="toggleSidebarCart"></i>
-      <router-link to="/signup">
-        <i class="fa-solid fa-user c515151" id="menu-icon"></i>
+      <router-link>
+        <i class="fa-solid fa-user c515151" id="menu-icon" @click="goToUserPage"></i>
       </router-link>
       <i class="fa-solid fa-bars" id="menu-icon" @click="toggleSidebar"></i>
     </div>
+
     <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar" :class="{ active: sidebarActive }">
       <div class="close-btn" id="closeBtn" @click="closeSidebar">
@@ -50,56 +53,49 @@
         <li><a class="a-menu" href="">CONTACT US</a></li>
       </ul>
     </div>
+    <!-- Sidebar Menu -->
 
     <!-- Sidebar Cart -->
-    <div class="sidebar-cart sidebar c-black" id="sidebar" :class="{ active: sidebarCart }">
-      <div class="sidebar-header">
-        <span>Giỏ hàng của bạn</span>
+    <div class="cart sidebar c-black" id="sidebar" :class="{ active: sidebarCart }">
+       <div class="sidebar-header">
         <div class="close-btn" id="closeBtn" @click="closeSidebar">
-        <i class="fas fa-times"></i>
-      </div>
-      </div>
-
-      <!-- Item 1 -->
-      <div class="cart-item">
-        <img src="https://levents.asia/cdn/shop/products/white.png?v=1" alt="Tee">
-        <div class="cart-info">
-          <h4>Levents® Seasonal Long Sleeve Boxy Tee</h4>
-          <p>600.000 VND</p>
-          <p>Size: 1 | Color: White</p>
-          <div class="quantity">
-            <button>-</button>
-            <span>1</span>
-            <button>+</button>
-          </div>
+          <i class="fas fa-times"></i>
         </div>
       </div>
 
-      <!-- Item 2 -->
-      <div class="cart-item">
-        <img src="https://levents.asia/cdn/shop/products/blue.png?v=1" alt="Shirt">
-        <div class="cart-info">
-          <h4>Levents® Striped Long Sleeve Boxy Polo Shirt</h4>
-          <p>650.000 VND</p>
-          <p>Size: 3 | Color: Blue</p>
-          <div class="quantity">
-            <button>-</button>
-            <span>1</span>
-            <button>+</button>
+      <h2 class="cart-title">Your Cart</h2>
+      <div class="cart-content">
+        <div class="cart-box">
+          <img src="https://content.pancake.vn/1/s700x875/b3/af/03/96/b8461d2219e55c4aaaa43b0f2d6d216133b4c96fffe015151eff03ca-w:3000-h:3750-l:971270-t:image/jpeg.jpeg" alt="Tee">
+          <div class="cart-detail">
+            <h2 class="cart-product-title">Casual Black Polo</h2>
+            <span class="cart-price">$100</span>
+            <div class="cart-quantity">
+              <button class="decrement">-</button>
+              <span class="number">1</span>
+              <button class="increment">+</button>
+            </div>
           </div>
+          <i class="fas fa-trash cart-remove"></i>
         </div>
       </div>
 
-      <!-- Checkout -->
-      <div class="checkout">
-        Thanh toán 1.250.000 VND
-      </div>
+      <div class="total-footer">
+        <div class="total">
+            <div class="total-title">Total</div>
+            <div class="total-price">$0</div>
+        </div>
+        <button class="total-buy">Buy Now</button>
     </div>
+    </div>
+    <!-- Sidebar Cart -->
   </header>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, nextTick  } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter() 
 
 const sidebarActive = ref(false)
 const sidebarCart = ref(false)
@@ -129,4 +125,63 @@ const scrollToProducts = () => {
     target.scrollIntoView({ behavior: 'smooth' })
   }
 }
+
+document.querySelectorAll('.cart-box').forEach(cartBox => {
+  const numberElement = cartBox.querySelector(".number");
+  const decrementBtn = cartBox.querySelector(".decrement");
+  const incrementBtn = cartBox.querySelector(".increment");
+
+  decrementBtn.addEventListener("click", () => {
+    let quantity = parseInt(numberElement.textContent);
+    if(quantity > 1){
+      quantity--;
+      numberElement.textContent = quantity;
+      decrementBtn.style.color = quantity === 1 ? "#999" : "#333";
+    }
+  });
+
+  incrementBtn.addEventListener("click", () => {
+    let quantity = parseInt(numberElement.textContent);
+    quantity++;
+    numberElement.textContent = quantity;
+    decrementBtn.style.color = "#333";
+  });
+});
+
+// Quanlity Button
+nextTick(() => {
+  document.querySelectorAll('.cart-box').forEach(cartBox => {
+    const numberElement = cartBox.querySelector(".number");
+    const decrementBtn = cartBox.querySelector(".decrement");
+    const incrementBtn = cartBox.querySelector(".increment");
+
+    decrementBtn.addEventListener("click", () => {
+      let quantity = parseInt(numberElement.textContent);
+      if(quantity > 1){
+        quantity--;
+        numberElement.textContent = quantity;
+        decrementBtn.style.color = quantity === 1 ? "#999" : "#333";
+      }
+    });
+
+    incrementBtn.addEventListener("click", () => {
+      let quantity = parseInt(numberElement.textContent);
+      quantity++;
+      numberElement.textContent = quantity;
+      decrementBtn.style.color = "#333";
+    });
+  });
+})
+
+// Check login
+const goToUserPage = () => {
+  const loggedIn = localStorage.getItem("userLoggedIn");
+  if(loggedIn) {
+    router.push("/account"); 
+  } else {
+    router.push("/login");
+  }
+}
+
+
 </script>

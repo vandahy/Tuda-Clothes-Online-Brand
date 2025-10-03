@@ -1,24 +1,24 @@
 <template>
   <div class="register-container c-black">
-    <h2 class="title">Đăng nhập</h2>
+    <h2 class="title">Login</h2>
     <form class="register-form" @submit.prevent="login">
       <!-- Họ và tên -->
       <div class="form-group">
-        <label>Email Hoặc Số Điện Thoại *</label>
-        <input type="text" v-model="username" placeholder="Nhập email hoặc số điện thoại" required />
+        <label>Email Or Phone Number *</label>
+        <input type="text" v-model="username" placeholder="Emai or Phone Number" required />
       </div>
 
       <!-- Mật khẩu -->
       <div class="form-group">
-        <label>Mật khẩu *</label>
-        <input type="password" v-model="password" placeholder="Mật khẩu" required />
+        <label>Password *</label>
+        <input type="password" v-model="password" placeholder="Password" required />
       </div>
-      <label class="t-bold">Quên thông tin tài khoản</label>
+      <label class="t-bold">Forgot Password</label>
 
       <!-- Nút đăng ký -->
-      <button type="submit" class="btn-submit">Đăng nhập</button>
+      <button type="submit" class="btn-submit">Login</button>
       <router-link to="/signup" class="move-sign-up c-black">
-          Bạn đã có tài khoản? Đăng ký ngay
+          Don’t have an account? Sign up now
       </router-link>
     </form>
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
@@ -44,6 +44,9 @@ export default {
         });
         if (res.data.success) {
           alert("Login thành công!");
+          localStorage.setItem("userLoggedIn", "true"); 
+          localStorage.setItem("username", res.data.username || this.username);
+          localStorage.setItem("token", res.data.token || ""); 
           // redirect tới trang home
           this.$router.push("/");
         } else {

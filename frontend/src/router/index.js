@@ -3,24 +3,29 @@ import Home from "../views/Home.vue";
 
 const routes = [
   {
-    path: "/",
-    name: "Home",
-    component: Home,
+    path: '/',
+    name: 'Home',
+    component: Home
   },
   {
-    path: "/signup",
-    name: "SignUp",
-    component: () => import("../views/SignUpForm.vue"),
+    path: '/signup',
+    name: 'SignUp',
+    component: () => import('../views/SignUpForm.vue')
   },
   {
-    path: "/login",
-    name: "Login",
-    component: () => import("../views/LoginForm.vue"),
+    path: '/login',
+    name: 'Login',
+    component: () => import('../views/LoginForm.vue')
   },
   {
-    path: "/products",
-    name: "ProductAll",
-    component: () => import("../views/ProductAll.vue"),
+    path: '/products',
+    name: 'ProductAll',
+    component: () => import('../views/ProductAll.vue')
+  },
+  {
+    path: '/account',
+    name: 'Account',
+    component: () => import('../views/AccountManagement.vue')
   },
   {
     path: "/products/:code",
@@ -28,7 +33,8 @@ const routes = [
     component: () => import("../views/ProductDetail.vue"),
     props: true,
   }
-];
+]
+
 
 const router = createRouter({
   history: createWebHistory(),
