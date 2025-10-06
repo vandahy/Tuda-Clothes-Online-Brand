@@ -4,7 +4,7 @@
 
     <div class="tabs">
       <button type="button" :class="['tab', activeTab === 'info' ? 'active' : '']" @click="activeTab = 'info'">Account Information</button>
-      <button type="button" :class="['tab', activeTab === 'security' ? 'active' : '']" @click="activeTab = 'security'">Security</button>
+      <button type="button" :class="['tab', activeTab === 'security' ? 'active' : '']" @click="activeTab = 'security'">Change Password</button>
     </div>
 
     <!-- Tab: Account Info -->
@@ -39,7 +39,7 @@
     <div class="card" v-show="activeTab === 'security'">
       <form class="form security-form" @submit.prevent="changePassword">
         <div class="form-group">
-          <label>Current Passwordi</label>
+          <label>Current Password</label>
           <input type="password"  placeholder="Current Password" />
         </div>
 

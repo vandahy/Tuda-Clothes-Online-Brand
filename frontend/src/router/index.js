@@ -7,10 +7,26 @@ const routes = [
     name: 'Home',
     component: Home
   },
+
   {
     path: '/signup',
     name: 'SignUp',
     component: () => import('../views/SignUpForm.vue')
+  },
+  {
+    path: '/order-detail/:id',
+    name: 'order-detail',
+    component: () => import('../views/OrderDetail.vue')
+  },
+  {
+    path: '/my-OrderSuccess',
+    name: 'OrderSuccess',
+    component: () => import('../views/OrderSuccess.vue')
+  },
+  {
+    path: '/order-form',
+    name: 'order-form',
+    component: () => import('../views/OrderForm.vue')
   },
   {
     path: '/login',
@@ -33,6 +49,7 @@ const routes = [
     component: () => import("../views/ProductDetail.vue"),
     props: true,
   }
+
 ]
 
 
