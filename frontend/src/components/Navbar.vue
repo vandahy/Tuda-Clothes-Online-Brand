@@ -85,7 +85,8 @@
             <div class="total-title">Total</div>
             <div class="total-price">$0</div>
         </div>
-        <button class="total-buy">Buy Now</button>
+        <!-- <button class="total-buy">Buy Now</button> -->
+         <router-link to="/order-form" @click="closeSidebar" class="total-buy">Buy Now</router-link>
     </div>
     </div>
     <!-- Sidebar Cart -->

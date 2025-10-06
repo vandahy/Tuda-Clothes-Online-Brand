@@ -864,10 +864,10 @@ select:focus {
     padding: 10px 30px;
     background: black;
     border: none;
-    font-style: 16px;
     color: #fff;
-    margin: 20px auto 0;
+    margin: 10px auto 0;
     cursor: pointer;
+    text-align: center;
 }
 
 
