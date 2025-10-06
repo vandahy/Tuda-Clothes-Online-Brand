@@ -5,25 +5,25 @@
       ✅
     </div>
 
-    <!-- Tiêu đề -->
-    <h2 class="title">Đặt hàng thành công!</h2>
+    <!-- Title -->
+    <h2 class="title">Order Successful!</h2>
 
-    <!-- Nội dung -->
+    <!-- Message -->
     <p class="message">
-      Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ để xác nhận đơn hàng trong thời gian sớm nhất.
+      Thank you for your purchase. We will contact you soon to confirm your order.
     </p>
 
-    <!-- Nút hành động -->
+    <!-- Actions -->
     <div class="actions">
       <router-link
         class="btn btn-outline"
-        :to="`order-detail/:id`"
+        :to="`order-detail/${orderId}`"
       >
-        Xem chi tiết đơn hàng
+        View Order Details
       </router-link>
 
       <router-link to="/" class="btn btn-primary">
-        Tiếp tục mua hàng
+        Continue Shopping
       </router-link>
     </div>
   </div>
