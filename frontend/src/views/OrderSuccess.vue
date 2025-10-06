@@ -17,7 +17,7 @@
     <div class="actions">
       <router-link
         class="btn btn-outline"
-        :to="`OrderDetail${orderId}`"
+        :to="`order-detail/:id`"
       >
         Xem chi tiết đơn hàng
       </router-link>

@@ -158,7 +158,7 @@
                 <span class="text-danger">{{ total.toLocaleString() }}₫</span>
               </div>
 
-            <router-link to="order-success" class="btn btn-primary">Đặt hàng</router-link>
+            <router-link to="my-OrderSuccess" class="btn btn-primary">Đặt hàng</router-link>
             </div>
           </div>
         </div>
