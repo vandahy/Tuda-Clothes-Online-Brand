@@ -9,7 +9,7 @@
       </div>
 
       <!-- Mật khẩu -->
-   75   <div class="form-group">
+<div class="form-group">
         <label>Password *</label>
         <input type="password" v-model="password" placeholder="Password" required />
       </div>

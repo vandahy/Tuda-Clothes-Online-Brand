@@ -66,8 +66,8 @@ const activeTab = ref('info')
 
 const form = ref({
   org: 'Thời Trang Nitimo',
-  fullName: 'Nguyễn Trung Nghĩa',
-  email: 'nghianitimo@gmail.com',
+  fullName: 'Nguyễn Khánh',
+  email: 'fpt@gmail.com',
   phone: '',
   address: '',
 })
