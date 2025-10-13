@@ -8,8 +8,4 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
-
-src/main/resources/application.properties
-# IntelliJ IDEA
-.idea/
-*.iml
+backend/src/main/resources/application.properties

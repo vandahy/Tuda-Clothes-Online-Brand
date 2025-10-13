@@ -31,7 +31,15 @@
           :alt="product.name"
         />
         <h2>{{ product.name }}</h2>
-        <h4>{{ formatPrice(product.price) }}</h4>
+        <div class="price-row">
+          <span class="discount" v-if="product.discount > 0">
+            -{{ Math.round((product.discount / product.price) * 100) }}%
+          </span>
+          <span class="price">{{ formatPrice(product.price - product.discount) }}</span>
+          <span class="old-price" v-if="product.discount > 0">
+            {{ formatPrice(product.price) }}
+          </span>
+        </div>
       </div>
     </div>
     <div class="pagination">
@@ -203,6 +211,27 @@ onMounted(() => {
   color: #ff6600;
   font-size: 16px;
   margin: 0;
+}
+.price-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center; /* thêm dòng này để căn giữa toàn bộ nội dung */
+}
+.discount {
+  color: red;
+  font-weight: bold;
+  font-size: 1rem;
+}
+.price {
+  color: #000;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+.old-price {
+  color: gray;
+  text-decoration: line-through;
+  font-size: 1rem;
 }
 .pagination {
   display: flex;
