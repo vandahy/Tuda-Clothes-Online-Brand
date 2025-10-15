@@ -73,27 +73,32 @@ public class ProductService {
     /**
      * Lấy sản phẩm bán chạy
      */
-    public Page<ProductDTO> getBestSellingProducts(Pageable pageable) {
+    public Page<ProductDTO> getBestSellingProducts(String categoryCode, Pageable pageable) {
+        if (categoryCode != null && !categoryCode.isEmpty()) {
+            return productRepository.findBestSellingProductsByCategory(categoryCode, pageable)
+                    .map(ProductMapper::toDTO);
+        }
         return productRepository.findBestSellingProducts(pageable)
                 .map(ProductMapper::toDTO);
     }
 
-    /**
-     * Lấy sản phẩm giảm giá
-     */
-    public Page<ProductDTO> getDiscountedProducts(Pageable pageable) {
+    public Page<ProductDTO> getDiscountedProducts(String categoryCode, Pageable pageable) {
+        if (categoryCode != null && !categoryCode.isEmpty()) {
+            return productRepository.findDiscountedProductsByCategory(categoryCode, pageable)
+                    .map(ProductMapper::toDTO);
+        }
         return productRepository.findDiscountedProducts(pageable)
                 .map(ProductMapper::toDTO);
     }
 
-    /**
-     * Lấy sản phẩm mới
-     */
-    public Page<ProductDTO> getNewProducts(Pageable pageable) {
+    public Page<ProductDTO> getNewProducts(String categoryCode, Pageable pageable) {
+        if (categoryCode != null && !categoryCode.isEmpty()) {
+            return productRepository.findNewProductsByCategory(categoryCode, pageable)
+                    .map(ProductMapper::toDTO);
+        }
         return productRepository.findNewProducts(pageable)
                 .map(ProductMapper::toDTO);
     }
-
     /**
      * Thêm hoặc cập nhật sản phẩm
      */

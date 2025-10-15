@@ -2,7 +2,9 @@ package chubby.teu.tuda.feature.productDisplay.mapper;
 
 import chubby.teu.tuda.feature.productDisplay.dto.ProductDTO;
 import chubby.teu.tuda.core.Product;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ProductMapper {
     public static ProductDTO toDTO(Product product) {
         return new ProductDTO(
