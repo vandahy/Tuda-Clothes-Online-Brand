@@ -24,7 +24,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
      */
     @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Product> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
-    
+
     /**
      * Tìm sản phẩm theo danh mục
      */
@@ -61,5 +61,17 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     @Query("SELECT p FROM Product p WHERE p.stockQuantity > 0 " +
            "ORDER BY p.createdAt DESC")
     Page<Product> findNewProducts(Pageable pageable);
-    
+
+    @Query("SELECT p FROM Product p LEFT JOIN p.orderDetails od " +
+            "WHERE p.stockQuantity > 0 AND p.category.categoryCode = :categoryCode " +
+            "GROUP BY p ORDER BY SUM(od.quantity) DESC")
+    Page<Product> findBestSellingProductsByCategory(@Param("categoryCode") String categoryCode, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.discount > 0 AND p.stockQuantity > 0 " +
+            "AND p.category.categoryCode = :categoryCode ORDER BY p.discount DESC")
+    Page<Product> findDiscountedProductsByCategory(@Param("categoryCode") String categoryCode, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.stockQuantity > 0 " +
+            "AND p.category.categoryCode = :categoryCode ORDER BY p.createdAt DESC")
+    Page<Product> findNewProductsByCategory(@Param("categoryCode") String categoryCode, Pageable pageable);
 }

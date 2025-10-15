@@ -12,10 +12,11 @@
             <li>
               <router-link class="a-nav" to="/products">All</router-link>
             </li>
-            <li><a href="#">T-Shirts</a></li>
-            <li><a href="#">Pants</a></li>
-            <li><a href="#">Outerwears</a></li>
-            <li><a href="#">Accessories</a></li>
+            <li v-for="category in categories" :key="category.categoryCode">
+              <router-link class="a-nav" :to="`/products?category=${category.categoryCode}`">
+                {{ category.name }}
+              </router-link>
+            </li>
           </ul>
         </li>
         <li><a class="a-nav" id="nav-products" href="#products-id">NEW ARRIVALS</a></li>
@@ -41,11 +42,14 @@
         <li>
           <a id="menu-item" class="a-menu" href="javascript:void(0)" @click="toggleSubmenu">SHOP</a>
           <ul class="submenu-slidebar" id="submenu" :class="{ active: submenuActive }">
-            <li><a class="a-menu child" href="#">All</a></li>
-            <li><a class="a-menu child" href="#">T-Shirts</a></li>
-            <li><a class="a-menu child" href="#">Pants</a></li>
-            <li><a class="a-menu child" href="#">Outerwears</a></li>
-            <li><a class="a-menu child" href="#">Accessories</a></li>
+            <li>
+              <router-link class="a-menu child" to="/products">All</router-link>
+            </li>
+            <li v-for="category in categories" :key="category.categoryCode">
+              <router-link class="a-menu child" :to="`/products?category=${category.categoryCode}`">
+                {{ category.name }}
+              </router-link>
+            </li>
           </ul>
         </li>
         <li><a class="a-menu" href="">NEW ARRIVALS</a></li>
@@ -94,13 +98,16 @@
 </template>
 
 <script setup>
-import { ref, nextTick  } from 'vue'
+import { ref, onMounted, nextTick } from 'vue' // Import nextTick
+import axios from 'axios'
 import { useRouter } from 'vue-router'
-const router = useRouter() 
+
+const router = useRouter()
 
 const sidebarActive = ref(false)
 const sidebarCart = ref(false)
 const submenuActive = ref(false)
+const categories = ref([]) // Biến lưu danh mục
 
 const toggleSidebar = () => {
   sidebarActive.value = !sidebarActive.value
@@ -119,6 +126,16 @@ const toggleSubmenu = () => {
   submenuActive.value = !submenuActive.value
 }
 
+// Gọi API để lấy danh mục
+onMounted(async () => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/categories') // Thay URL nếu cần
+    categories.value = response.data
+  } catch (error) {
+    console.error('Error fetching categories:', error)
+  }
+})
+
 // Smooth scroll functionality
 const scrollToProducts = () => {
   const target = document.getElementById('products-id')
@@ -126,28 +143,6 @@ const scrollToProducts = () => {
     target.scrollIntoView({ behavior: 'smooth' })
   }
 }
-
-document.querySelectorAll('.cart-box').forEach(cartBox => {
-  const numberElement = cartBox.querySelector(".number");
-  const decrementBtn = cartBox.querySelector(".decrement");
-  const incrementBtn = cartBox.querySelector(".increment");
-
-  decrementBtn.addEventListener("click", () => {
-    let quantity = parseInt(numberElement.textContent);
-    if(quantity > 1){
-      quantity--;
-      numberElement.textContent = quantity;
-      decrementBtn.style.color = quantity === 1 ? "#999" : "#333";
-    }
-  });
-
-  incrementBtn.addEventListener("click", () => {
-    let quantity = parseInt(numberElement.textContent);
-    quantity++;
-    numberElement.textContent = quantity;
-    decrementBtn.style.color = "#333";
-  });
-});
 
 // Quanlity Button
 nextTick(() => {
@@ -158,7 +153,7 @@ nextTick(() => {
 
     decrementBtn.addEventListener("click", () => {
       let quantity = parseInt(numberElement.textContent);
-      if(quantity > 1){
+      if (quantity > 1) {
         quantity--;
         numberElement.textContent = quantity;
         decrementBtn.style.color = quantity === 1 ? "#999" : "#333";
@@ -177,12 +172,10 @@ nextTick(() => {
 // Check login
 const goToUserPage = () => {
   const loggedIn = localStorage.getItem("userLoggedIn");
-  if(loggedIn) {
-    router.push("/account"); 
+  if (loggedIn) {
+    router.push("/account");
   } else {
     router.push("/login");
   }
 }
-
-
 </script>

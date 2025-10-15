@@ -30,7 +30,26 @@ public class ProductController {
     }
 
     @GetMapping("/page")
-    public Page<ProductDTO> getAllProductsPage(Pageable pageable) {
+    public Page<ProductDTO> getAllProductsPage(
+            @RequestParam(required = false) String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable;
+
+        if (sort != null && !sort.isEmpty()) {
+            String[] sortParams = sort.split(",");
+            String sortField = sortParams[0];
+            String sortDirection = sortParams.length > 1 ? sortParams[1] : "desc";
+
+            if (sortDirection.equalsIgnoreCase("asc")) {
+                pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by(sortField).ascending());
+            } else {
+                pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by(sortField).descending());
+            }
+        } else {
+            pageable = PageRequest.of(page, size);
+        }
+
         return productService.getAllProducts(pageable);
     }
 
@@ -56,10 +75,28 @@ public class ProductController {
      * Lấy sản phẩm theo danh mục
      */
     @GetMapping("/category/{categoryCode}")
-    public Page<ProductDTO> getProductsByCategory(@PathVariable String categoryCode,
-                                                  @RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int size) {
-        return productService.getProductsByCategory(categoryCode, PageRequest.of(page, size));
+    public Page<ProductDTO> getProductsByCategory(
+            @PathVariable String categoryCode,
+            @RequestParam(required = false) String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable;
+
+        if (sort != null && !sort.isEmpty()) {
+            String[] sortParams = sort.split(",");
+            String sortField = sortParams[0];
+            String sortDirection = sortParams.length > 1 ? sortParams[1] : "desc";
+
+            if (sortDirection.equalsIgnoreCase("asc")) {
+                pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by(sortField).ascending());
+            } else {
+                pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by(sortField).descending());
+            }
+        } else {
+            pageable = PageRequest.of(page, size);
+        }
+
+        return productService.getProductsByCategory(categoryCode, pageable);
     }
 
     /**
@@ -77,27 +114,33 @@ public class ProductController {
      * Lấy sản phẩm bán chạy
      */
     @GetMapping("/best-selling")
-    public Page<ProductDTO> getBestSellingProducts(@RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "10") int size) {
-        return productService.getBestSellingProducts(PageRequest.of(page, size));
+    public Page<ProductDTO> getBestSellingProducts(
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return productService.getBestSellingProducts(category, PageRequest.of(page, size));
     }
 
     /**
      * Lấy sản phẩm giảm giá
      */
     @GetMapping("/discounted")
-    public Page<ProductDTO> getDiscountedProducts(@RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int size) {
-        return productService.getDiscountedProducts(PageRequest.of(page, size));
+    public Page<ProductDTO> getDiscountedProducts(
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return productService.getDiscountedProducts(category, PageRequest.of(page, size));
     }
 
     /**
      * Lấy sản phẩm mới
      */
     @GetMapping("/new")
-    public Page<ProductDTO> getNewProducts(@RequestParam(defaultValue = "0") int page,
-                                           @RequestParam(defaultValue = "10") int size) {
-        return productService.getNewProducts(PageRequest.of(page, size));
+    public Page<ProductDTO> getNewProducts(
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return productService.getNewProducts(category, PageRequest.of(page, size));
     }
 
     /**
