@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
@@ -12,18 +13,16 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@IdClass(OrderDetail.OrderDetailId.class)
 public class OrderDetail {
 
-    @EmbeddedId
-    private OrderDetailId id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("orderCode") // ánh xạ với field orderCode trong OrderDetailId
+    @Id
+    @ManyToOne
     @JoinColumn(name = "orderCode", nullable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("productCode") // ánh xạ với field productCode trong OrderDetailId
+    @Id
+    @ManyToOne
     @JoinColumn(name = "productCode", nullable = false)
     private Product product;
 
@@ -39,17 +38,11 @@ public class OrderDetail {
     @Column(name = "subTotal", precision = 14, scale = 2)
     private BigDecimal subTotal;
 
-    // Embedded composite key class
-    @Embeddable
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class OrderDetailId {
-        @Column(name = "orderCode")
-        private String orderCode;
-
-        @Column(name = "productCode")
-        private String productCode;
+    public static class OrderDetailId implements Serializable {
+        private String order;
+        private String product;
     }
 }
-

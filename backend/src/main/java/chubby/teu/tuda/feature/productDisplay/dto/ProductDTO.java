@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,6 +17,7 @@ public class ProductDTO {
     private BigDecimal price;
     private BigDecimal discount;
     private Integer stockQuantity;
-    private String imageUrl;
+    private String categoryCode;
     private String categoryName; // lấy từ Category
+    private List<ProductImageDTO> images; // Danh sách hình ảnh
 }

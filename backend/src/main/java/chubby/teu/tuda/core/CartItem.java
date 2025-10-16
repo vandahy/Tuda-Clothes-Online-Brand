@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Entity
@@ -12,18 +13,16 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@IdClass(CartItem.CartItemId.class)
 public class CartItem {
 
-    @EmbeddedId
-    private CartItemId id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("cartCode") // liên kết với field cartCode trong CartItemId
+    @Id
+    @ManyToOne
     @JoinColumn(name = "cartCode", nullable = false)
     private Cart cart;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("productCode") // liên kết với field productCode trong CartItemId
+    @Id
+    @ManyToOne
     @JoinColumn(name = "productCode", nullable = false)
     private Product product;
 
@@ -33,16 +32,11 @@ public class CartItem {
     @Column(name = "price", nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
 
-    @Embeddable
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CartItemId {
-        @Column(name = "cartCode")
-        private String cartCode;
-
-        @Column(name = "productCode")
-        private String productCode;
+    public static class CartItemId implements Serializable {
+        private String cart;
+        private String product;
     }
 }
-
