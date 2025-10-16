@@ -15,42 +15,45 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
-    
+
     @Id
     @Column(name = "productCode", length = 10)
     private String productCode;
-    
+
     @Column(name = "name", nullable = false, length = 150)
     private String name;
-    
+
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
-    
+
     @Column(name = "price", nullable = false, precision = 12, scale = 2)
     private BigDecimal price;
-    
+
     @Column(name = "discount", precision = 12, scale = 2)
     private BigDecimal discount = BigDecimal.ZERO;
-    
+
     @Column(name = "stockQuantity")
     private Integer stockQuantity = 0;
-    
-    @Column(name = "imageUrl", length = 255)
-    private String imageUrl;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoryCode")
+
+    @ManyToOne
+    @JoinColumn(name = "categoryCode", referencedColumnName = "categoryCode")
     private Category category;
-    
+
     @Column(name = "createdAt")
     private LocalDateTime createdAt = LocalDateTime.now();
-    
+
     @Column(name = "updatedAt")
     private LocalDateTime updatedAt = LocalDateTime.now();
-    
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductImage> images;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
-    
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetails;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Inventory> inventories;
 }

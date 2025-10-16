@@ -18,9 +18,15 @@
         >
           <div class="image-container">
             <img
-              :src="product.imageUrl || '/src/assets/images/products/tsh1.jpg'"
+              :src="getPrimaryImage(product)"
               :alt="product.name"
               class="default-img"
+            />
+            <img
+              v-if="getSecondaryImage(product)"
+              :src="getSecondaryImage(product)"
+              :alt="product.name"
+              class="hover-img"
             />
           </div>
           <h2>{{ product.name }}</h2>
@@ -52,6 +58,40 @@ const fetchProducts = async () => {
   } catch (e) {
     products.value = [];
   }
+};
+
+const getPrimaryImage = (product) => {
+  // Kiểm tra nếu product có images array
+  if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+    // Tìm ảnh primary
+    const primaryImage = product.images.find(img => img.isPrimary);
+    if (primaryImage && primaryImage.imageUrl) {
+      return primaryImage.imageUrl;
+    }
+    // Nếu không có ảnh primary, lấy ảnh đầu tiên
+    if (product.images[0].imageUrl) {
+      return product.images[0].imageUrl;
+    }
+  }
+  // Trả về ảnh mặc định nếu không có ảnh nào
+  return '/src/assets/images/products/tsh1.jpg';
+};
+
+const getSecondaryImage = (product) => {
+  // Kiểm tra nếu product có images array và có ít nhất 2 ảnh
+  if (product.images && Array.isArray(product.images) && product.images.length > 1) {
+    // Tìm ảnh không phải primary (ảnh phụ đầu tiên)
+    const secondaryImage = product.images.find(img => !img.isPrimary);
+    if (secondaryImage && secondaryImage.imageUrl) {
+      return secondaryImage.imageUrl;
+    }
+    // Nếu không có ảnh phụ, lấy ảnh thứ 2 trong mảng
+    if (product.images[1].imageUrl) {
+      return product.images[1].imageUrl;
+    }
+  }
+  // Không có ảnh phụ
+  return null;
 };
 
 const nextSlide = () => {
@@ -110,11 +150,41 @@ onUnmounted(() => {
   min-width: 0;
 }
 
-.product-item img {
+.image-container {
+  position: relative;
   width: 100%;
   height: 180px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 8px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.3s ease;
+}
+
+.default-img {
+  opacity: 1;
+  z-index: 1;
+}
+
+.hover-img {
+  opacity: 0;
+  z-index: 2;
+}
+
+.image-container:hover .hover-img {
+  opacity: 1;
+}
+
+.image-container:hover .default-img {
+  opacity: 0;
 }
 
 .carousel-btn {

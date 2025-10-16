@@ -26,10 +26,19 @@
         :key="product.productCode"
         @click="goToDetail(product.productCode)"
       >
-        <img
-          :src="product.imageUrl || '/src/assets/images/products/tsh1.jpg'"
-          :alt="product.name"
-        />
+        <div class="image-container">
+          <img
+            :src="getPrimaryImage(product.images)"
+            :alt="product.name"
+            class="default-img"
+          />
+          <img
+            v-if="getSecondaryImage(product.images)"
+            :src="getSecondaryImage(product.images)"
+            :alt="product.name"
+            class="hover-img"
+          />
+        </div>
         <h2>{{ product.name }}</h2>
         <div class="price-row">
           <span class="discount" v-if="product.discount > 0">
@@ -62,10 +71,46 @@ const size = ref(10);
 const hasNext = ref(false);
 
 const router = useRouter();
-const route = useRoute(); // Lấy route hiện tại
+const route = useRoute();
 
 const goToDetail = (code) => {
   router.push({ name: "ProductDetail", params: { code } });
+};
+
+// Hàm lấy hình ảnh chính hoặc hình ảnh đầu tiên
+const getPrimaryImage = (images) => {
+  if (!images || images.length === 0) {
+    return '/src/assets/images/products/tsh1.jpg'; // Ảnh mặc định
+  }
+  
+  // Tìm ảnh có isPrimary = true
+  const primaryImage = images.find(img => img.isPrimary);
+  if (primaryImage) {
+    return primaryImage.imageUrl;
+  }
+  
+  // Nếu không có ảnh primary, lấy ảnh đầu tiên
+  return images[0].imageUrl;
+};
+
+// Hàm lấy hình ảnh thứ 2 (để hiện khi hover)
+const getSecondaryImage = (images) => {
+  if (!images || images.length < 2) {
+    return null; // Không có ảnh thứ 2
+  }
+  
+  // Tìm ảnh có isPrimary = true
+  const primaryImage = images.find(img => img.isPrimary);
+  
+  if (primaryImage) {
+    // Lấy ảnh tiếp theo sau ảnh primary
+    const primaryIndex = images.indexOf(primaryImage);
+    const nextIndex = (primaryIndex + 1) % images.length;
+    return images[nextIndex].imageUrl;
+  }
+  
+  // Nếu không có ảnh primary, lấy ảnh thứ 2 trong mảng
+  return images[1].imageUrl;
 };
 
 const fetchProducts = async () => {
@@ -155,6 +200,7 @@ const prevPage = () => {
     fetchProducts();
   }
 };
+
 const nextPage = () => {
   if (hasNext.value) {
     page.value++;
@@ -234,16 +280,58 @@ watch(() => route.query.category, fetchProducts);
   padding: 15px;
   text-align: center;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: transform 0.2s;
 }
-.product-item img {
+
+.product-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.image-container {
   width: 100%;
   height: 180px;
+  overflow: hidden;
+  border-radius: 8px;
+  position: relative;
+}
+
+.product-item img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 8px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.3s ease-in-out;
 }
+
+.default-img {
+  opacity: 1;
+  z-index: 1;
+}
+
+.hover-img {
+  opacity: 0;
+  z-index: 2;
+}
+
+.product-item:hover .default-img {
+  opacity: 0;
+}
+
+.product-item:hover .hover-img {
+  opacity: 1;
+}
+
 .product-item h2 {
   font-size: 18px;
   margin: 10px 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .product-item h4 {
   color: #ff6600;
@@ -254,7 +342,7 @@ watch(() => route.query.category, fetchProducts);
   display: flex;
   align-items: center;
   gap: 10px;
-  justify-content: center; /* thêm dòng này để căn giữa toàn bộ nội dung */
+  justify-content: center;
 }
 .discount {
   color: red;
@@ -277,6 +365,20 @@ watch(() => route.query.category, fetchProducts);
   align-items: center;
   gap: 15px;
   margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 @media (max-width: 1024px) {

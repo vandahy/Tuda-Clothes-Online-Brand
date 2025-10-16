@@ -14,18 +14,29 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cart {
-    
+
     @Id
     @Column(name = "cartCode", length = 10)
     private String cartCode;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne
     @JoinColumn(name = "username", nullable = false)
     private User user;
-    
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private CartStatus status = CartStatus.INACTIVE;
+
     @Column(name = "createdAt")
     private LocalDateTime createdAt = LocalDateTime.now();
-    
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+    @Column(name = "updatedAt")
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
+
+    public enum CartStatus {
+        ACTIVE, INACTIVE
+    }
 }
