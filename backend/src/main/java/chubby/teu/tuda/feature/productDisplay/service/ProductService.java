@@ -1,7 +1,7 @@
 package chubby.teu.tuda.feature.productDisplay.service;
 
-import chubby.teu.tuda.feature.productDisplay.dto.ProductDTO;
 import chubby.teu.tuda.core.Product;
+import chubby.teu.tuda.feature.productDisplay.dto.ProductDTO;
 import chubby.teu.tuda.feature.productDisplay.mapper.ProductMapper;
 import chubby.teu.tuda.feature.productDisplay.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,21 +12,20 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private ProductMapper productMapper;
+
     /**
      * Lấy tất cả sản phẩm
      */
     public List<ProductDTO> getAllProducts() {
-        return productRepository.findAll()
-                .stream()
-                .map(ProductMapper::toDTO)
-                .collect(Collectors.toList());
+        return productMapper.toDTOList(productRepository.findAll());
     }
 
     /**
@@ -34,7 +33,7 @@ public class ProductService {
      */
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable)
-                .map(ProductMapper :: toDTO);
+                .map(productMapper::toDTO); //~~product -> productMapper.toDTO(product)
     }
 
     /**
@@ -42,7 +41,7 @@ public class ProductService {
      */
     public Optional<ProductDTO> getProductByCode(String productCode) {
         return productRepository.findByProductCode(productCode)
-                .map(ProductMapper::toDTO);
+                .map(productMapper::toDTO);
     }
 
     /**
@@ -50,7 +49,7 @@ public class ProductService {
      */
     public Page<ProductDTO> searchProducts(String keyword, Pageable pageable) {
         return productRepository.findByKeyword(keyword, pageable)
-                .map(ProductMapper :: toDTO);
+                .map(productMapper::toDTO);
     }
 
     /**
@@ -58,7 +57,7 @@ public class ProductService {
      */
     public Page<ProductDTO> getProductsByCategory(String categoryCode, Pageable pageable) {
         return productRepository.findByCategoryCategoryCode(categoryCode, pageable)
-                .map(ProductMapper::toDTO);
+                .map(productMapper::toDTO);
     }
 
     /**
@@ -66,32 +65,37 @@ public class ProductService {
      */
     public Page<ProductDTO> getProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
         return productRepository.findByPriceRange(minPrice, maxPrice, pageable)
-                .map(ProductMapper::toDTO);
+                .map(productMapper::toDTO);
     }
-
 
     /**
      * Lấy sản phẩm bán chạy
      */
-    public Page<ProductDTO> getBestSellingProducts(Pageable pageable) {
+    public Page<ProductDTO> getBestSellingProducts(String categoryCode, Pageable pageable) {
+        if (categoryCode != null && !categoryCode.isEmpty()) {
+            return productRepository.findBestSellingProductsByCategory(categoryCode, pageable)
+                    .map(productMapper::toDTO);
+        }
         return productRepository.findBestSellingProducts(pageable)
-                .map(ProductMapper::toDTO);
+                .map(productMapper::toDTO);
     }
 
-    /**
-     * Lấy sản phẩm giảm giá
-     */
-    public Page<ProductDTO> getDiscountedProducts(Pageable pageable) {
+    public Page<ProductDTO> getDiscountedProducts(String categoryCode, Pageable pageable) {
+        if (categoryCode != null && !categoryCode.isEmpty()) {
+            return productRepository.findDiscountedProductsByCategory(categoryCode, pageable)
+                    .map(productMapper::toDTO);
+        }
         return productRepository.findDiscountedProducts(pageable)
-                .map(ProductMapper::toDTO);
+                .map(productMapper::toDTO);
     }
 
-    /**
-     * Lấy sản phẩm mới
-     */
-    public Page<ProductDTO> getNewProducts(Pageable pageable) {
+    public Page<ProductDTO> getNewProducts(String categoryCode, Pageable pageable) {
+        if (categoryCode != null && !categoryCode.isEmpty()) {
+            return productRepository.findNewProductsByCategory(categoryCode, pageable)
+                    .map(productMapper::toDTO);
+        }
         return productRepository.findNewProducts(pageable)
-                .map(ProductMapper::toDTO);
+                .map(productMapper::toDTO);
     }
 
     /**
@@ -107,5 +111,4 @@ public class ProductService {
     public void deleteProduct(String productCode) {
         productRepository.deleteById(productCode);
     }
-
 }

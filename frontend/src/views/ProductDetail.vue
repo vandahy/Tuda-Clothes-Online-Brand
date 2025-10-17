@@ -4,14 +4,14 @@
       <div class="thumbnail-list">
         <img
           v-for="(img, idx) in product.images"
-          :key="idx"
-          :src="img"
+          :key="img.imageId"
+          :src="img.imageUrl"
           :class="{ active: idx === selectedImageIndex }"
           @click="selectedImageIndex = idx"
         />
       </div>
       <div class="main-image">
-        <img :src="product.images[selectedImageIndex]" :alt="product.name" />
+        <img :src="product.images[selectedImageIndex]?.imageUrl" :alt="product.name" />
       </div>
     </div>
     <div class="product-info">
@@ -114,7 +114,7 @@ onMounted(() => {
 }
 .thumbnail-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
   margin-bottom: 20px;
 }
