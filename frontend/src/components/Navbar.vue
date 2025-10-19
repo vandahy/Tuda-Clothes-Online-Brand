@@ -60,122 +60,270 @@
     <!-- Sidebar Menu -->
 
     <!-- Sidebar Cart -->
-    <div class="cart sidebar c-black" id="sidebar" :class="{ active: sidebarCart }">
-       <div class="sidebar-header">
-        <div class="close-btn" id="closeBtn" @click="closeSidebar">
-          <i class="fas fa-times"></i>
-        </div>
-      </div>
+    <div class="cart sidebar c-black" id="sidebarCart" :class="{ active: sidebarCart }"> <div class="sidebar-header">
+         <div class="close-btn" id="closeBtnCart" @click="closeSidebar"> <i class="fas fa-times"></i>
+         </div>
+       </div>
 
-      <h2 class="cart-title">Your Cart</h2>
-      <div class="cart-content">
-        <div class="cart-box">
-          <img src="https://content.pancake.vn/1/s700x875/b3/af/03/96/b8461d2219e55c4aaaa43b0f2d6d216133b4c96fffe015151eff03ca-w:3000-h:3750-l:971270-t:image/jpeg.jpeg" alt="Tee">
+       <h2 class="cart-title">Your Cart</h2>
+
+       <div class="cart-content">
+
+         <div v-if="cartItems.length === 0" class="cart-empty">
+            Your cart is empty
+         </div>
+
+         <div class="cart-box" v-for="(item, index) in cartItems" :key="item.id">
+          <img :src="item.imageUrl || '/src/assets/images/placeholder.jpg'" :alt="item.productName">
           <div class="cart-detail">
-            <h2 class="cart-product-title">Casual Black Polo</h2>
-            <span class="cart-price">$100</span>
+            <h2 class="cart-product-title">{{ item.productName }} - {{ item.size }} </h2>
+            <span class="cart-price">{{ formatPrice(item.price) }}</span>
             <div class="cart-quantity">
-              <button class="decrement">-</button>
-              <span class="number">1</span>
-              <button class="increment">+</button>
+              <button class="decrement" @click="updateCartItemQuantity(item.variantId, item.quantity - 1)">-</button>
+              <span class="number">{{ item.quantity }}</span>
+              <button class="increment" @click="updateCartItemQuantity(item.variantId, item.quantity + 1)">+</button>
             </div>
           </div>
-          <i class="fas fa-trash cart-remove"></i>
+          <i class="fas fa-trash cart-remove" @click="removeCartItem(item.variantId)"></i>
         </div>
-      </div>
 
-      <div class="total-footer">
-        <div class="total">
-            <div class="total-title">Total</div>
-            <div class="total-price">$0</div>
-        </div>
-        <!-- <button class="total-buy">Buy Now</button> -->
-         <router-link to="/order-form" @click="closeSidebar" class="total-buy">Buy Now</router-link>
-    </div>
-    </div>
+       </div>
+       <div class="total-footer">
+         <div class="total">
+             <div class="total-title">Total</div>
+             <div class="total-price">{{ formatPrice(cartTotal) }}</div>
+         </div>
+         <div class="cart-buttons flex flex-col gap-2">
+        <router-link to="/order-form" @click="closeSidebar" class="total-buy">Buy Now</router-link>
+      </div>
+     </div>
+     <div @click="cleanCart" class="clean-btn"><p>Clean All</p></div>
+   </div>
     <!-- Sidebar Cart -->
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue' // Import nextTick
-import axios from 'axios'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, watch, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
+import api from '@/utils/api.js'; 
+import emitter from '@/utils/emitter.js';
 
-const router = useRouter()
+const router = useRouter();
 
-const sidebarActive = ref(false)
-const sidebarCart = ref(false)
-const submenuActive = ref(false)
-const categories = ref([]) // Biến lưu danh mục
+const sidebarActive = ref(false);
+const sidebarCart = ref(false);
+const submenuActive = ref(false);
+const categories = ref([]);
 
+// --- ADD CART STATE ---
+const cartItems = ref([]); // To store cart items from API
+const cartTotal = ref(0);  // To store calculated total price
+// --- END CART STATE ---
+
+// --- CART FUNCTIONS ---
+// Function to fetch cart items from the backend
+const fetchCartItems = async () => {
+  // Check if user is actually logged in by checking for the token
+  const token = localStorage.getItem("token");
+  if (!token) {
+    cartItems.value = []; // Clear cart if not logged in
+    cartTotal.value = 0;
+    console.log("User not logged in, clearing cart display."); // Debug log
+    return;
+  }
+
+  try {
+    console.log("Fetching cart items..."); // Debug log
+    // Use 'api.get' which automatically sends the token
+    const response = await api.get('/api/cart-items/slide-bar');
+    cartItems.value = response.data;
+    console.log("Cart items received:", cartItems.value); // Debug log
+    calculateTotal(); // Calculate total after fetching
+  } catch (error) {
+    console.error('Error fetching cart items:', error);
+    // Handle specific errors like 401/403 if needed
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        console.warn("Unauthorized or Forbidden fetching cart. Maybe token expired?");
+        // Optionally clear token and redirect to login
+        // localStorage.removeItem("token");
+        // localStorage.removeItem("userLoggedIn");
+        // router.push("/login");
+    }
+    cartItems.value = []; // Clear cart on error
+    cartTotal.value = 0;
+  }
+};
+
+// Function to calculate the total price of the cart
+const calculateTotal = () => {
+  cartTotal.value = cartItems.value.reduce((sum, item) => {
+    // Ensure 'item.price' exists and is a number.
+    // This 'price' should be the TOTAL price for that item line (unit price * quantity)
+    // coming directly from your DTO.
+    return sum + (Number(item.price) || 0);
+  }, 0);
+  console.log("Calculated cart total:", cartTotal.value); // Debug log
+};
+
+// Watch for the cart sidebar opening, then fetch items
+watch(sidebarCart, (newValue) => {
+  if (newValue === true) {
+    console.log("Cart sidebar opened, fetching items."); // Debug log
+    fetchCartItems();
+  } else {
+    console.log("Cart sidebar closed."); // Debug log
+  }
+});
+// --- END CART FUNCTIONS ---
+
+// --- CATEGORY FUNCTIONS ---
+// Function to fetch categories
+const fetchCategories = async () => {
+  try {
+    // Use 'api.get' instead of axios directly
+    const response = await api.get('/api/categories'); // Use relative path if baseURL is set in api.js
+    categories.value = response.data;
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+  }
+};
+// --- END CATEGORY FUNCTIONS ---
+
+// Lifecycle hook
+onMounted(async () => {
+  await fetchCategories(); // Fetch categories when component mounts
+  // Optional: Fetch cart items on initial load if user might already be logged in
+  // fetchCartItems();
+});
+
+// --- UI TOGGLE FUNCTIONS (Keep existing) ---
 const toggleSidebar = () => {
-  sidebarActive.value = !sidebarActive.value
-}
+  sidebarActive.value = !sidebarActive.value;
+};
 
 const toggleSidebarCart = () => {
-  sidebarCart.value = !sidebarCart.value
-}
+  sidebarCart.value = !sidebarCart.value;
+  // fetchCartItems is now handled by the 'watch' above
+};
 
 const closeSidebar = () => {
-  sidebarActive.value = false
-  sidebarCart.value = false
-}
+  sidebarActive.value = false;
+  sidebarCart.value = false;
+};
 
 const toggleSubmenu = () => {
-  submenuActive.value = !submenuActive.value
-}
+  submenuActive.value = !submenuActive.value;
+};
+// --- END UI TOGGLE FUNCTIONS ---
 
-// Gọi API để lấy danh mục
-onMounted(async () => {
-  try {
-    const response = await axios.get('http://localhost:8080/api/categories') // Thay URL nếu cần
-    categories.value = response.data
-  } catch (error) {
-    console.error('Error fetching categories:', error)
-  }
-})
-
+// --- NAVIGATION & UTILS (Keep existing, add formatPrice) ---
 // Smooth scroll functionality
 const scrollToProducts = () => {
-  const target = document.getElementById('products-id')
+  const target = document.getElementById('products-id');
   if (target) {
-    target.scrollIntoView({ behavior: 'smooth' })
+    target.scrollIntoView({ behavior: 'smooth' });
   }
-}
+};
 
-// Quanlity Button
-nextTick(() => {
-  document.querySelectorAll('.cart-box').forEach(cartBox => {
-    const numberElement = cartBox.querySelector(".number");
-    const decrementBtn = cartBox.querySelector(".decrement");
-    const incrementBtn = cartBox.querySelector(".increment");
-
-    decrementBtn.addEventListener("click", () => {
-      let quantity = parseInt(numberElement.textContent);
-      if (quantity > 1) {
-        quantity--;
-        numberElement.textContent = quantity;
-        decrementBtn.style.color = quantity === 1 ? "#999" : "#333";
-      }
-    });
-
-    incrementBtn.addEventListener("click", () => {
-      let quantity = parseInt(numberElement.textContent);
-      quantity++;
-      numberElement.textContent = quantity;
-      decrementBtn.style.color = "#333";
-    });
-  });
-})
-
-// Check login
+// Check login status and navigate
 const goToUserPage = () => {
-  const loggedIn = localStorage.getItem("userLoggedIn");
-  if (loggedIn) {
+  // Check the actual token instead of 'userLoggedIn' flag for better accuracy
+  const token = localStorage.getItem("token");
+  if (token) {
     router.push("/account");
   } else {
     router.push("/login");
   }
-}
+};
+
+// Price formatting function
+const formatPrice = (price) => {
+  if (price === undefined || price === null || isNaN(price)) return "0₫";
+  return Number(price).toLocaleString("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
+};
+// --- END NAVIGATION & UTILS ---
+
+// Xóa sản phẩm khỏi giỏ hàng
+const removeCartItem = async (variantId) => {
+  const url = `/api/cart-items/remove?variantId=${variantId}`; 
+  try {
+    await api.delete(url); 
+    cartItems.value = cartItems.value.filter(item => item.variantId !== variantId);
+    calculateTotal();
+  } catch (error) {
+    console.error("Lỗi khi xóa sản phẩm:", error);
+  }
+};
+
+// Cập nhật số lượng sản phẩm trong giỏ hàng
+const updateCartItemQuantity = async (variantId, newQuantity) => { 
+  if (newQuantity < 1) {
+    console.warn("Số lượng không thể nhỏ hơn 1.");
+    return; 
+  }
+
+  const url = `/api/cart-items/update?variantId=${variantId}&quantity=${newQuantity}`;
+  console.log("[DEBUG] Gọi updateQuantity với URL:", url); 
+
+  try {
+    await api.put(url);
+    console.log("[DEBUG] API update thành công."); 
+
+    await fetchCartItems(); 
+    console.log("[DEBUG] Đã fetch lại cart items sau khi update.");
+
+  } catch (error) {
+    console.error("Lỗi khi cập nhật số lượng:", error);
+    if (error.response) {
+        console.error('[DEBUG] Lỗi response từ server khi update:', error.response);
+    }
+  }
+};
+
+//Xóa sạch toàn bộ giỏ hàng
+const cleanCart = async () => { 
+  if (cartItems.value.length === 0) {
+    console.log("Giỏ hàng đã rỗng, không cần xóa.");
+    return; 
+  }
+
+  const cartCode = cartItems.value[0].cartCode; 
+
+  if (!cartCode) {
+    console.error("Lỗi: Không tìm thấy cartCode trong item đầu tiên!");
+    return;
+  }
+
+  const url = `/api/cart-items/clean?cartCode=${cartCode}`;
+  console.log("[DEBUG] Gọi cleanCart với URL:", url); 
+
+  try {
+    await api.delete(url);
+    cartItems.value = [];
+    cartTotal.value = 0;
+    console.log("Đã xóa toàn bộ giỏ hàng thành công.");
+  } catch (error) {
+    console.error("Lỗi khi xóa toàn bộ giỏ hàng:", error);
+    if (error.response) {
+        console.error('[DEBUG] Lỗi response từ server khi clean:', error.response);
+    }
+  }
+};
+
+const handleCartUpdate = () => {
+    fetchCartItems();
+};
+
+onMounted(() => {
+    emitter.on('cart-updated', handleCartUpdate);
+    fetchCategories(); // Giữ lại dòng này
+});
+
+onUnmounted(() => {
+    emitter.off('cart-updated', handleCartUpdate);
+});
 </script>
