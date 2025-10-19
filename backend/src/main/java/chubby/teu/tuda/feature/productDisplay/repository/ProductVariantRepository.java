@@ -3,12 +3,13 @@ package chubby.teu.tuda.feature.productDisplay.repository;
 import chubby.teu.tuda.core.ProductVariant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
+
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Repository
 public interface ProductVariantRepository extends JpaRepository<ProductVariant,Integer> {
     List<ProductVariant> findByProductCode(String productCode);
 
