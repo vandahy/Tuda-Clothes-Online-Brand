@@ -870,5 +870,9 @@ select:focus {
     text-align: center;
 }
 
+.clean-btn {
+    cursor: pointer;
+}
+
 
 /* Slidebar-cart */
