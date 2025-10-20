@@ -9,7 +9,7 @@
       </div>
 
       <!-- Mật khẩu -->
-<div class="form-group">
+   75   <div class="form-group">
         <label>Password *</label>
         <input type="password" v-model="password" placeholder="Password" required />
       </div>
@@ -25,7 +25,7 @@
   </div>
 </template>
 <script>
-import api from "@/api.js";
+import axios from "axios";
 
 export default {
   data() {
@@ -38,7 +38,7 @@ export default {
   methods: {
     async login() {
       try {
-        const res = await api.post("/api/login", {
+        const res = await axios.post("/api/login", {
           username: this.username,
           password: this.password
         });

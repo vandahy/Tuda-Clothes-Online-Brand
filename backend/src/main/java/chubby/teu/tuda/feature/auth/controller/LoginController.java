@@ -1,6 +1,5 @@
 package chubby.teu.tuda.feature.auth.controller;
 
-import chubby.teu.tuda.feature.auth.Component.JwtTokenProvider;
 import chubby.teu.tuda.feature.auth.dto.login.LoginRequest;
 import chubby.teu.tuda.feature.auth.dto.login.LoginResponse;
 import chubby.teu.tuda.feature.auth.service.LoginService;
@@ -16,16 +15,13 @@ import jakarta.validation.Valid;
 public class LoginController {
     @Autowired
     private LoginService userService;
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
         boolean success = userService.checkLogin(loginRequest.getUsername(), loginRequest.getPassword());
 
         if (success) {
-            String token = jwtTokenProvider.generateToken(loginRequest.getUsername());
-            return ResponseEntity.ok(new LoginResponse(true, "Login successful",token));
+            return ResponseEntity.ok(new LoginResponse(true, "Login successful"));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new LoginResponse(false, "Invalid credentials"));
