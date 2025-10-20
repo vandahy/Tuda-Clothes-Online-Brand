@@ -2,6 +2,7 @@ package chubby.teu.tuda.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,13 +24,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter)
+            throws Exception {
         http
-                // === CHỈ CẦN DUY NHẤT DÒNG NÀY ===
-                // Tắt hoàn toàn CSRF vì bạn dùng JWT (Stateless)
                 .csrf(csrf -> csrf.disable())
 
-                // Cấu hình CORS (Đã đúng)
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(List.of("http://localhost:5173"));
@@ -39,13 +38,16 @@ public class SecurityConfig {
                     return config;
                 }))
 
-                // Bắt buộc STATELESS vì bạn dùng JWT
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login", "/api/register", "/api/products/**", "/api/categories").permitAll()
-                        .anyRequest().authenticated() // Cart-items sẽ yêu cầu đăng nhập
-                );
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/login",
+                                "/api/register",
+                                "/api/products/**",
+                                "/api/categories")
+                        .permitAll()
+                        .anyRequest().authenticated());
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
