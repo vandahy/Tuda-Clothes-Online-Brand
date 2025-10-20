@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import UserManager from "../views/UserManager.vue";
+import CategoryManager from "../views/CategoryManager.vue";
+import ProductManager from "../views/ProductManager.vue";
+import OrderManager from "../views/OrderManager.vue";
 
 const routes = [
   {
@@ -13,8 +16,21 @@ const routes = [
     name: 'UserManager',
     component: UserManager
   },
-
-
+    {
+    path: '/CategoryManager',
+    name: 'CategoryManager',
+    component: CategoryManager
+  },
+      {
+    path: '/OrderManager',
+    name: 'OrderManager',
+    component: OrderManager
+  },
+        {
+    path: '/ProductManager',
+    name: 'ProductManager',
+    component: ProductManager
+  },
   {
     path: '/signup',
     name: 'SignUp',
@@ -50,16 +66,15 @@ const routes = [
     name: 'Account',
     component: () => import('../views/AccountManagement.vue')
   },
-  
+
+
   {
     path: "/products/:code",
     name: "ProductDetail",
     component: () => import("../views/ProductDetail.vue"),
     props: true,
   }
-
-]
-
+];
 
 const router = createRouter({
   history: createWebHistory(),
