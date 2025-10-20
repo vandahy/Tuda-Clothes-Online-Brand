@@ -95,7 +95,7 @@ const decreaseQty = () => {
 const addToCart = async () => {
     // 1. Kiểm tra size (giữ nguyên)
     if (!selectedSize.value) {
-        alert("Vui lòng chọn size sản phẩm!");
+        alert("Let select a size!");
         return;
     }
 
@@ -115,7 +115,12 @@ const addToCart = async () => {
     } catch (error) {
         console.error('Errol call API add to cart', error);
         if (error.response) {
-            alert(`Lỗi: ${error.response.data.error || error.response.data.message}`);
+            if (error.response.status === 401 || error.response.status === 403) {
+                alert('Login to add to cart!');
+            } else {
+                const errorMessage = error.response.data.error || error.response.data.message;
+                alert(`Lỗi: ${errorMessage || 'Có lỗi xảy ra, vui lòng thử lại.'}`);
+            }
         } else {
             // Lỗi mạng (mất kết nối)
             alert('Không thể kết nối đến server. Vui lòng thử lại sau.');
