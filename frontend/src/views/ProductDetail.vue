@@ -29,9 +29,15 @@
         }}</span>
       </div>
       <div class="size-row">
-        <span v-for="size in product.sizes" :key="size" class="size-btn">{{
-          size
-        }}</span>
+          <span
+              v-for="size in product.sizes"
+              :key="size"
+              class="size-btn"
+              :class="{ 'active': size === selectedSize }"
+              @click="selectedSize = size"
+          >
+              {{ size }}
+          </span>
       </div>
       <div class="quantity-row">
         <button @click="decreaseQty">-</button>
@@ -48,6 +54,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import api from '@/utils/api.js'; 
+import emitter from '@/utils/emitter.js';
 
 const route = useRoute();
 const product = ref({
@@ -61,6 +69,7 @@ const product = ref({
 });
 const selectedImageIndex = ref(0);
 const quantity = ref(1);
+const selectedSize = ref(null);
 
 const fetchProduct = async () => {
   // Assume route.params.code is the product code
@@ -83,16 +92,42 @@ const decreaseQty = () => {
   if (quantity.value > 1) quantity.value--;
 };
 
-const addToCart = () => {
-  // Handle add to cart
-  alert("Added to cart!");
+const addToCart = async () => {
+    // 1. Kiểm tra size (giữ nguyên)
+    if (!selectedSize.value) {
+        alert("Vui lòng chọn size sản phẩm!");
+        return;
+    }
+
+    // 2. Tạo payload (giữ nguyên)
+    const cartItemPayload = {
+        productCode: product.value.sku,
+        quantity: quantity.value,
+        size: selectedSize.value,
+    };
+
+    // 3. Gửi request bằng 'api' (đã thay thế)
+    try {
+        const response = await api.post('/api/carts/add', cartItemPayload);
+        emitter.emit('cart-updated');
+        alert(response.data.message); 
+
+    } catch (error) {
+        console.error('Errol call API add to cart', error);
+        if (error.response) {
+            alert(`Lỗi: ${error.response.data.error || error.response.data.message}`);
+        } else {
+            // Lỗi mạng (mất kết nối)
+            alert('Không thể kết nối đến server. Vui lòng thử lại sau.');
+        }
+    }
 };
 
 const formatPrice = (price) =>
-  Number(price).toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+    Number(price).toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 
 onMounted(() => {
-  fetchProduct();
+    fetchProduct();
 });
 </script>
 
@@ -180,6 +215,11 @@ onMounted(() => {
   cursor: pointer;
   background: #fff;
   font-weight: bold;
+}
+.size-btn.active {
+    background-color: black;
+    color: #fff;
+    border-color: black;
 }
 .quantity-row {
   display: flex;
