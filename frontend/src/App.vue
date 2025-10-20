@@ -1,19 +1,23 @@
 <template>
-  <div class="container">
-    <div class="head-container">
-      <Navbar />
-      <main>
-        <Slider />
-        <ProductList />
-      </main>
-    </div>
-  </div>
-  <Footer />
+  <v-app>
+    <Navbar />
+    <v-main>
+      <router-view></router-view>
+    </v-main>
+    <Footer />
+  </v-app>
 </template>
 
-<script setup>
+
+<script>
 import Navbar from './components/Navbar.vue'
-import Slider from './components/Slider.vue'
-import ProductList from './components/ProductList.vue'
 import Footer from './components/Footer.vue'
+export default {
+  name: "App",
+  components: {
+    Navbar,
+    Footer
+  }
+};
 </script>
+<style src="./assets/css/role.css"></style>
