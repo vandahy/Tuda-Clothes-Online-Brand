@@ -17,4 +17,7 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant,I
 
     @Query("SELECT pv FROM ProductVariant pv WHERE pv.productCode = :productCode AND pv.isActive = true")
     List<ProductVariant> findActiveVariantsByProductCode(String productCode);
+
+    //Nghĩa
+    Optional<ProductVariant> findByProduct_ProductCodeAndSizeId(String productCode, Integer sizeId);
 }

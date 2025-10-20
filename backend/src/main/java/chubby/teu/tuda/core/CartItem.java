@@ -23,8 +23,8 @@ public class CartItem {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "productCode", nullable = false)
-    private Product product;
+    @JoinColumn(name = "variantId", nullable = false)
+    private ProductVariant variant;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity = 1;
@@ -37,6 +37,6 @@ public class CartItem {
     @AllArgsConstructor
     public static class CartItemId implements Serializable {
         private String cart;
-        private String product;
+        private int variant;
     }
 }
