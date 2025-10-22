@@ -25,13 +25,26 @@
       </ul>    
     </nav>
 
-    <div class="menu-icon flex">
-      <i class="fa-solid fa-cart-shopping c515151" id="menu-icon" @click="toggleSidebarCart"></i>
-      <router-link>
-        <i class="fa-solid fa-user c515151" id="menu-icon" @click="goToUserPage"></i>
-      </router-link>
-      <i class="fa-solid fa-bars" id="menu-icon" @click="toggleSidebar"></i>
-    </div>
+   <!-- <div class="menu-icon flex">
+  <i class="fa-solid fa-cart-shopping c515151 menu-icon-btn" @click="toggleSidebarCart"></i>
+  <i class="fa-solid fa-user c515151 menu-icon-btn" @click="goToUserPage"></i>
+  <i class="fa-solid fa-bars menu-icon-btn" @click="toggleSidebar"></i>
+  <i class="fa-solid fa-gear menu-icon-btn" @click="toggleManager"></i>
+</div> -->
+<div class="menu-icon">
+  <i class="fa-solid fa-cart-shopping menu-icon-btn" @click="toggleSidebarCart"></i>
+  <i class="fa-solid fa-user menu-icon-btn" @click="goToUserPage"></i>
+  <i class="fa-solid fa-bars menu-icon-btn" @click="toggleSidebar"></i>
+  <i class="fa-solid fa-gear menu-icon-btn" @click="toggleManager"></i>
+</div>
+<!-- Manager Dropdown -->
+<div v-if="Manager" class="manager-dropdown">
+  <router-link class="manager-item" to="/OrderManager">Order</router-link>
+  <router-link class="manager-item" to="/ProductManager">Product</router-link>
+  <router-link class="manager-item" to="/CategoryManager">Category</router-link>
+  <router-link class="manager-item" to="/UserManager">User</router-link>
+</div>
+
 
     <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar" :class="{ active: sidebarActive }">
@@ -60,270 +73,160 @@
     <!-- Sidebar Menu -->
 
     <!-- Sidebar Cart -->
-    <div class="cart sidebar c-black" id="sidebarCart" :class="{ active: sidebarCart }"> <div class="sidebar-header">
-         <div class="close-btn" id="closeBtnCart" @click="closeSidebar"> <i class="fas fa-times"></i>
-         </div>
-       </div>
+    <div class="cart sidebar c-black" id="sidebar" :class="{ active: sidebarCart }">
+       <div class="sidebar-header">
+        <div class="close-btn" id="closeBtn" @click="closeSidebar">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
 
-       <h2 class="cart-title">Your Cart</h2>
-
-       <div class="cart-content">
-
-         <div v-if="cartItems.length === 0" class="cart-empty">
-            Your cart is empty
-         </div>
-
-         <div class="cart-box" v-for="(item, index) in cartItems" :key="item.id">
-          <img :src="item.imageUrl || '/src/assets/images/placeholder.jpg'" :alt="item.productName">
+      <h2 class="cart-title">Your Cart</h2>
+      <div class="cart-content">
+        <div class="cart-box">
+<img src="https://content.pancake.vn/1/s700x875/b3/af/03/96/b8461d2219e55c4aaaa43b0f2d6d216133b4c96fffe015151eff03ca-w:3000-h:3750-l:971270-t:image/jpeg.jpeg" alt="Tee">
           <div class="cart-detail">
-            <h2 class="cart-product-title">{{ item.productName }} - {{ item.size }} </h2>
-            <span class="cart-price">{{ formatPrice(item.price) }}</span>
+            <h2 class="cart-product-title">Casual Black Polo</h2>
+            <span class="cart-price">$100</span>
             <div class="cart-quantity">
-              <button class="decrement" @click="updateCartItemQuantity(item.variantId, item.quantity - 1)">-</button>
-              <span class="number">{{ item.quantity }}</span>
-              <button class="increment" @click="updateCartItemQuantity(item.variantId, item.quantity + 1)">+</button>
+              <button class="decrement">-</button>
+              <span class="number">1</span>
+              <button class="increment">+</button>
             </div>
           </div>
-          <i class="fas fa-trash cart-remove" @click="removeCartItem(item.variantId)"></i>
+          <i class="fas fa-trash cart-remove"></i>
         </div>
-
-       </div>
-       <div class="total-footer">
-         <div class="total">
-             <div class="total-title">Total</div>
-             <div class="total-price">{{ formatPrice(cartTotal) }}</div>
-         </div>
-         <div class="cart-buttons flex flex-col gap-2">
-        <router-link to="/order-form" @click="closeSidebar" class="total-buy">Buy Now</router-link>
       </div>
-     </div>
-     <div @click="cleanCart" class="clean-btn"><p>Clean All</p></div>
-   </div>
+
+      <div class="total-footer">
+        <div class="total">
+            <div class="total-title">Total</div>
+            <div class="total-price">$0</div>
+        </div>
+        <!-- <button class="total-buy">Buy Now</button> -->
+         <router-link to="/order-form" @click="closeSidebar" class="total-buy">Buy Now</router-link>
+    </div>
+    </div>
     <!-- Sidebar Cart -->
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
-import api from '@/utils/api.js'; 
-import emitter from '@/utils/emitter.js';
+import { ref, onMounted, nextTick } from 'vue' 
+import axios from 'axios'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
-const sidebarActive = ref(false);
-const sidebarCart = ref(false);
-const submenuActive = ref(false);
-const categories = ref([]);
+const sidebarActive = ref(false)
+const sidebarCart = ref(false)
+const submenuActive = ref(false)
+const Manager = ref(false) // <-- thêm state cho menu manager
+const categories = ref([]) 
 
-// --- ADD CART STATE ---
-const cartItems = ref([]); // To store cart items from API
-const cartTotal = ref(0);  // To store calculated total price
-// --- END CART STATE ---
+// Toggle sidebar / cart / manager menu
+const toggleSidebar = () => sidebarActive.value = !sidebarActive.value
+const toggleSidebarCart = () => sidebarCart.value = !sidebarCart.value
+const toggleManager = () => Manager.value = !Manager.value
+const closeSidebar = () => { sidebarActive.value = false; sidebarCart.value = false }
+const toggleSubmenu = () => submenuActive.value = !submenuActive.value
 
-// --- CART FUNCTIONS ---
-// Function to fetch cart items from the backend
-const fetchCartItems = async () => {
-  // Check if user is actually logged in by checking for the token
-  const token = localStorage.getItem("token");
-  if (!token) {
-    cartItems.value = []; // Clear cart if not logged in
-    cartTotal.value = 0;
-    console.log("User not logged in, clearing cart display."); // Debug log
-    return;
-  }
-
-  try {
-    console.log("Fetching cart items..."); // Debug log
-    // Use 'api.get' which automatically sends the token
-    const response = await api.get('/api/cart-items/slide-bar');
-    cartItems.value = response.data;
-    console.log("Cart items received:", cartItems.value); // Debug log
-    calculateTotal(); // Calculate total after fetching
-  } catch (error) {
-    console.error('Error fetching cart items:', error);
-    // Handle specific errors like 401/403 if needed
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-        console.warn("Unauthorized or Forbidden fetching cart. Maybe token expired?");
-        // Optionally clear token and redirect to login
-        // localStorage.removeItem("token");
-        // localStorage.removeItem("userLoggedIn");
-        // router.push("/login");
-    }
-    cartItems.value = []; // Clear cart on error
-    cartTotal.value = 0;
-  }
-};
-
-// Function to calculate the total price of the cart
-const calculateTotal = () => {
-  cartTotal.value = cartItems.value.reduce((sum, item) => {
-    // Ensure 'item.price' exists and is a number.
-    // This 'price' should be the TOTAL price for that item line (unit price * quantity)
-    // coming directly from your DTO.
-    return sum + (Number(item.price) || 0);
-  }, 0);
-  console.log("Calculated cart total:", cartTotal.value); // Debug log
-};
-
-// Watch for the cart sidebar opening, then fetch items
-watch(sidebarCart, (newValue) => {
-  if (newValue === true) {
-    console.log("Cart sidebar opened, fetching items."); // Debug log
-    fetchCartItems();
-  } else {
-    console.log("Cart sidebar closed."); // Debug log
-  }
-});
-// --- END CART FUNCTIONS ---
-
-// --- CATEGORY FUNCTIONS ---
-// Function to fetch categories
-const fetchCategories = async () => {
-  try {
-    // Use 'api.get' instead of axios directly
-    const response = await api.get('/api/categories'); // Use relative path if baseURL is set in api.js
-    categories.value = response.data;
-  } catch (error) {
-    console.error('Error fetching categories:', error);
-  }
-};
-// --- END CATEGORY FUNCTIONS ---
-
-// Lifecycle hook
+// Fetch categories
 onMounted(async () => {
-  await fetchCategories(); // Fetch categories when component mounts
-  // Optional: Fetch cart items on initial load if user might already be logged in
-  // fetchCartItems();
-});
-
-// --- UI TOGGLE FUNCTIONS (Keep existing) ---
-const toggleSidebar = () => {
-  sidebarActive.value = !sidebarActive.value;
-};
-
-const toggleSidebarCart = () => {
-  sidebarCart.value = !sidebarCart.value;
-  // fetchCartItems is now handled by the 'watch' above
-};
-
-const closeSidebar = () => {
-  sidebarActive.value = false;
-  sidebarCart.value = false;
-};
-
-const toggleSubmenu = () => {
-  submenuActive.value = !submenuActive.value;
-};
-// --- END UI TOGGLE FUNCTIONS ---
-
-// --- NAVIGATION & UTILS (Keep existing, add formatPrice) ---
-// Smooth scroll functionality
-const scrollToProducts = () => {
-  const target = document.getElementById('products-id');
-  if (target) {
-    target.scrollIntoView({ behavior: 'smooth' });
-  }
-};
-
-// Check login status and navigate
-const goToUserPage = () => {
-  // Check the actual token instead of 'userLoggedIn' flag for better accuracy
-  const token = localStorage.getItem("token");
-  if (token) {
-    router.push("/account");
-  } else {
-    router.push("/login");
-  }
-};
-
-// Price formatting function
-const formatPrice = (price) => {
-  if (price === undefined || price === null || isNaN(price)) return "0₫";
-  return Number(price).toLocaleString("vi-VN", {
-    style: "currency",
-    currency: "VND",
-  });
-};
-// --- END NAVIGATION & UTILS ---
-
-// Xóa sản phẩm khỏi giỏ hàng
-const removeCartItem = async (variantId) => {
-  const url = `/api/cart-items/remove?variantId=${variantId}`; 
   try {
-    await api.delete(url); 
-    cartItems.value = cartItems.value.filter(item => item.variantId !== variantId);
-    calculateTotal();
+    const response = await axios.get('http://localhost:8080/api/categories')
+    categories.value = response.data
   } catch (error) {
-    console.error("Lỗi khi xóa sản phẩm:", error);
+    console.error('Error fetching categories:', error)
   }
-};
+})
 
-// Cập nhật số lượng sản phẩm trong giỏ hàng
-const updateCartItemQuantity = async (variantId, newQuantity) => { 
-  if (newQuantity < 1) {
-    console.warn("Số lượng không thể nhỏ hơn 1.");
-    return; 
-  }
+// Smooth scroll
+const scrollToProducts = () => {
+  const target = document.getElementById('products-id')
+  if (target) target.scrollIntoView({ behavior: 'smooth' })
+}
 
-  const url = `/api/cart-items/update?variantId=${variantId}&quantity=${newQuantity}`;
-  console.log("[DEBUG] Gọi updateQuantity với URL:", url); 
+// Cart quantity buttons
+nextTick(() => {
+  document.querySelectorAll('.cart-box').forEach(cartBox => {
+    const numberElement = cartBox.querySelector(".number")
+    const decrementBtn = cartBox.querySelector(".decrement")
+    const incrementBtn = cartBox.querySelector(".increment")
 
-  try {
-    await api.put(url);
-    console.log("[DEBUG] API update thành công."); 
+    decrementBtn.addEventListener("click", () => {
+      let quantity = parseInt(numberElement.textContent)
+      if (quantity > 1) {
+        quantity--
+        numberElement.textContent = quantity
+        decrementBtn.style.color = quantity === 1 ? "#999" : "#333"
+      }
+    })
 
-    await fetchCartItems(); 
-    console.log("[DEBUG] Đã fetch lại cart items sau khi update.");
+    incrementBtn.addEventListener("click", () => {
+      let quantity = parseInt(numberElement.textContent)
+      quantity++
+      numberElement.textContent = quantity
+      decrementBtn.style.color = "#333"
+    })
+  })
+})
 
-  } catch (error) {
-    console.error("Lỗi khi cập nhật số lượng:", error);
-    if (error.response) {
-        console.error('[DEBUG] Lỗi response từ server khi update:', error.response);
-    }
-  }
-};
+// Check login
+const goToUserPage = () => {
+  const loggedIn = localStorage.getItem("userLoggedIn")
+  router.push(loggedIn ? "/account" : "/login")
+}
 
-//Xóa sạch toàn bộ giỏ hàng
-const cleanCart = async () => { 
-  if (cartItems.value.length === 0) {
-    console.log("Giỏ hàng đã rỗng, không cần xóa.");
-    return; 
+// Click ngoài để đóng menu manager
+document.addEventListener("click", (e) => {
+  const managerMenu = document.querySelector(".manager-dropdown")
+  const managerIcon = document.querySelector(".fa-people-roof")
+  if (Manager.value && managerMenu && !managerMenu.contains(e.target) && !managerIcon.contains(e.target)) {
+    Manager.value = false
   }
-
-  const cartCode = cartItems.value[0].cartCode; 
-
-  if (!cartCode) {
-    console.error("Lỗi: Không tìm thấy cartCode trong item đầu tiên!");
-    return;
-  }
-
-  const url = `/api/cart-items/clean?cartCode=${cartCode}`;
-  console.log("[DEBUG] Gọi cleanCart với URL:", url); 
-
-  try {
-    await api.delete(url);
-    cartItems.value = [];
-    cartTotal.value = 0;
-    console.log("Đã xóa toàn bộ giỏ hàng thành công.");
-  } catch (error) {
-    console.error("Lỗi khi xóa toàn bộ giỏ hàng:", error);
-    if (error.response) {
-        console.error('[DEBUG] Lỗi response từ server khi clean:', error.response);
-    }
-  }
-};
-
-const handleCartUpdate = () => {
-    fetchCartItems();
-};
-
-onMounted(() => {
-    emitter.on('cart-updated', handleCartUpdate);
-    fetchCategories(); // Giữ lại dòng này
-});
-
-onUnmounted(() => {
-    emitter.off('cart-updated', handleCartUpdate);
-});
+})
 </script>
+<style scoped>
+.menu-icon {
+  display: flex;
+  align-items: center;       /* căn thẳng hàng với navbar */
+  gap: 1.5rem;               /* khoảng cách giữa các icon */
+  margin-left: auto;          /* đẩy sang phải */
+}
+
+.menu-icon-btn {
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #515151;
+  transition: color 0.2s;
+}
+
+.menu-icon-btn:hover {
+  color: #000;
+}
+
+/* Manager dropdown style */
+.manager-dropdown {
+  position: absolute;
+  top: 100%;                 /* ngay dưới icon */
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.manager-item {
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: #333;
+}
+
+.manager-item:hover {
+  background-color: #f0f0f0;
+}
+
+</style>
