@@ -5,11 +5,18 @@
       <div class='form-grid'>
         <input v-model='product.productCode' placeholder='Product Code' :disabled='isEdit' />
         <input v-model='product.name' placeholder='Product Name' />
-        <input v-model='product.description' placeholder='Description' />
+        <input v-model='product.description' placeholder='Description' class="form-field-full-width" />
         <input type="number" v-model.number='product.price' placeholder='Price' />
         <input type="number" v-model.number='product.discount' placeholder='Discount' />
         <input type="number" v-model.number='product.stockQuantity' placeholder='Stock Quantity' />
-        <input v-model='product.categoryCode' placeholder='Category Code' />
+        
+        <select v-model="product.category.categoryCode">
+          <option disabled value="">-- Please select a Category --</option>
+          <option v-for="cat in categories" :key="cat.categoryCode" :value="cat.categoryCode">
+            {{ cat.name }}
+          </option>
+        </select>
+
       </div>
       <div class='btn-group'>
         <button class="btn btn-primary" @click='submitForm'>
@@ -45,14 +52,16 @@
               <td>{{ p.name }}</td>
               <td class="text-right">{{ formatPrice(p.price) }}</td>
               <td class="text-right">{{ p.stockQuantity }}</td>
-              <td>{{ p.categoryCode }}</td>
+              
+              <td>{{ p.category ? p.category.name : 'N/A' }}</td>
+
               <td>{{ formatDate(p.updatedAt) }}</td>
               <td class="action-buttons">
                 <button class="btn-icon" @click='editProduct(p)' title="Edit Product">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px" fill="#6c757d"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                 </button>
                 <button class="btn-icon btn-danger-icon" @click='deleteProduct(p.productCode)' title="Delete Product">
-                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 0 24 24" width="20px" fill="#6c757d"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
                 </button>
               </td>
             </tr>
@@ -64,14 +73,15 @@
 </template>
 
 <script setup>
-// Script không thay đổi, giữ nguyên như cũ
 import { ref, onMounted, computed } from "vue";
 
-// API URL
-const API_URL = "http://localhost:8080/api/products";
+// API URLs
+const API_PRODUCTS_URL = "http://localhost:8080/api/manager/products";
+const API_CATEGORIES_URL = "http://localhost:8080/api/manager/categories";
 
 // State
 const products = ref([]);
+const categories = ref([]);
 const product = ref({
   productCode: "",
   name: "",
@@ -79,28 +89,28 @@ const product = ref({
   price: 0,
   discount: 0,
   stockQuantity: 0,
-  categoryCode: ""
+  category: { // SỬA 3: Dùng object category lồng nhau
+    categoryCode: "" 
+  }
 });
 const isEdit = ref(false);
 const searchQuery = ref('');
 
-// Computed: Logic to filter products
+// Computed
 const filteredProducts = computed(() => {
-  if (!searchQuery.value) {
-    return products.value;
-  }
+  if (!searchQuery.value) return products.value;
   const lowerCaseQuery = searchQuery.value.toLowerCase();
   return products.value.filter(p =>
     (p.productCode ?? '').toLowerCase().includes(lowerCaseQuery) ||
     (p.name ?? '').toLowerCase().includes(lowerCaseQuery) ||
-    (p.categoryCode ?? '').toLowerCase().includes(lowerCaseQuery)
+    (p.category?.name ?? '').toLowerCase().includes(lowerCaseQuery)
   );
 });
 
 // Fetch products
 const getProducts = async () => {
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(API_PRODUCTS_URL);
     if (!res.ok) throw new Error("Failed to fetch products");
     products.value = await res.json();
   } catch (err) {
@@ -109,16 +119,23 @@ const getProducts = async () => {
   }
 };
 
+// Fetch categories
+const getCategories = async () => {
+  try {
+    const res = await fetch(API_CATEGORIES_URL);
+    if (!res.ok) throw new Error("Failed to fetch categories");
+    categories.value = await res.json();
+  } catch (err) {
+    console.error("Error fetching categories:", err);
+    alert("Error fetching categories. Check console.");
+  }
+};
+
 // Reset form
 const resetForm = () => {
   product.value = {
-    productCode: "",
-    name: "",
-    description: "",
-    price: 0,
-    discount: 0,
-    stockQuantity: 0,
-    categoryCode: ""
+    productCode: "", name: "", description: "", price: 0, discount: 0, stockQuantity: 0,
+    category: { categoryCode: "" }
   };
   isEdit.value = false;
 };
@@ -128,8 +145,8 @@ const submitForm = async () => {
   try {
     const method = isEdit.value ? "PUT" : "POST";
     const url = isEdit.value
-      ? `${API_URL}/${product.value.productCode}`
-      : API_URL;
+      ? `${API_PRODUCTS_URL}/${product.value.productCode}`
+      : API_PRODUCTS_URL;
 
     const res = await fetch(url, {
       method,
@@ -137,65 +154,76 @@ const submitForm = async () => {
       body: JSON.stringify(product.value)
     });
 
-    if (!res.ok)
-      throw new Error(`${isEdit.value ? "Update" : "Create"} failed`);
-
-    alert(
-      `${isEdit.value ? "Product updated" : "Product created"} successfully!`
-    );
+    if (!res.ok) {
+        // Cố gắng đọc lỗi từ backend để hiển thị
+        const errorData = await res.json().catch(() => ({ message: "Submit failed with status: " + res.status }));
+        throw new Error(errorData.message || "Submit failed");
+    }
+    
+    alert("Success!");
     resetForm();
     getProducts();
   } catch (err) {
     console.error(err);
-    alert("Error. Check console.");
+    alert(`Error: ${err.message}`);
   }
 };
 
-// Delete product
+// SỬA 4: Thêm lại đầy đủ logic cho hàm delete
 const deleteProduct = async (productCode) => {
-  if (!confirm(`Delete product ${productCode}?`)) return;
+  if (!confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${productCode}" không?`)) {
+    return;
+  }
   try {
-    const res = await fetch(`${API_URL}/${productCode}`, { method: "DELETE" });
-    if (!res.ok) throw new Error("Delete failed");
+    const res = await fetch(`${API_PRODUCTS_URL}/${productCode}`, { 
+      method: "DELETE" 
+    });
+
+    if (!res.ok) {
+      throw new Error("Delete failed");
+    }
+    
     alert("Product deleted successfully!");
     getProducts();
   } catch (err) {
-    console.error(err);
+    console.error("Error deleting product:", err);
     alert("Error deleting product. Check console.");
   }
 };
 
-// Edit product
+// SỬA 5: Sửa lại hàm editProduct cho an toàn
 const editProduct = (p) => {
-  product.value = { ...p };
-  isEdit.value = true;
-  const formElement = document.querySelector('.form-section');
-  if (formElement) {
-    formElement.scrollIntoView({ behavior: 'smooth' });
+  // Dùng deep copy để tránh các vấn đề về tham chiếu
+  product.value = JSON.parse(JSON.stringify(p)); 
+  // Nếu sản phẩm không có category (dữ liệu cũ), tạo object rỗng để v-model không lỗi
+  if (!product.value.category) {
+      product.value.category = { categoryCode: "" };
   }
+  isEdit.value = true;
+  document.querySelector('.form-section')?.scrollIntoView({ behavior: 'smooth' });
 };
 
-// Format date
+// Format functions
 const formatDate = (datetime) => {
   if (!datetime) return "";
   return new Date(datetime).toLocaleString("vi-VN", {
-      day: '2-digit', month: '2-digit', year: 'numeric'
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
   });
 };
-
-// Format price
 const formatPrice = (price) => {
     if (price === undefined || price === null) return "";
     return Number(price).toLocaleString("vi-VN", { style: "currency", currency: "VND" });
-}
+};
 
-// Load products on mount
+// Load data on mount
 onMounted(() => {
   getProducts();
+  getCategories();
 });
 </script>
-
 <style scoped>
+
 /* THAY ĐỔI: Cập nhật CSS đồng bộ với CategoryManager */
 /* GENERAL LAYOUT */
 .admin-container {

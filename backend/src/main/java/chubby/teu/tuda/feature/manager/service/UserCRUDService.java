@@ -1,17 +1,17 @@
-package chubby.teu.tuda.manager.service;
+package chubby.teu.tuda.feature.manager.service;
 
-import chubby.teu.tuda.manager.model.User;
-import chubby.teu.tuda.manager.repository.UserRepository;
+import chubby.teu.tuda.core.User;
+import chubby.teu.tuda.feature.manager.repository.UserCRUDRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserCRUDService {
 
-    private final UserRepository repo;
+    private final UserCRUDRepository repo;
 
-    public UserService(UserRepository repo) {
+    public UserCRUDService(UserCRUDRepository repo) {
         this.repo = repo;
     }
 

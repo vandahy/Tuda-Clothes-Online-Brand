@@ -1,4 +1,4 @@
-package chubby.teu.tuda.manager.dto;
+package chubby.teu.tuda.feature.manager.dto;
 
 public class UserDto {
     private String username;
@@ -8,7 +8,13 @@ public class UserDto {
     private String address;
     private String role;
     private String status;
+    private String password; // <-- THÊM TRƯỜNG MỚI
 
+    // Thêm constructor rỗng (good practice)
+    public UserDto() {
+    }
+
+    // Constructor đầy đủ (không có password, dùng để trả về dữ liệu)
     public UserDto(String username, String fullName, String email, String phone, String address, String role, String status) {
         this.username = username;
         this.fullName = fullName;
@@ -34,4 +40,8 @@ public class UserDto {
     public void setRole(String role) { this.role = role; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    // <-- THÊM GETTER VÀ SETTER CHO PASSWORD
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }

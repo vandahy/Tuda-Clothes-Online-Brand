@@ -1,9 +1,11 @@
 package chubby.teu.tuda.core;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,7 +13,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "products")
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"images", "orderDetails", "inventories", "category"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
@@ -39,11 +43,11 @@ public class Product {
     @JoinColumn(name = "categoryCode", referencedColumnName = "categoryCode")
     private Category category;
 
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "createdAt", updatable = false)
+    private LocalDateTime createdAt;
 
     @Column(name = "updatedAt")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductImage> images;
@@ -53,4 +57,21 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Inventory> inventories;
+
+    /**
+     * Tự động đặt giá trị cho createdAt và updatedAt trước khi lưu lần đầu.
+     */
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * Tự động cập nhật giá trị cho updatedAt trước khi cập nhật bản ghi.
+     */
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

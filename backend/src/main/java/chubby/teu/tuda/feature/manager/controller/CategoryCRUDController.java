@@ -1,20 +1,20 @@
-package chubby.teu.tuda.manager.controller;
+package chubby.teu.tuda.feature.manager.controller;
 
-import chubby.teu.tuda.manager.dto.CategoryDto;
-import chubby.teu.tuda.manager.model.Category;
-import chubby.teu.tuda.manager.repository.CategoryRepository;
+import chubby.teu.tuda.feature.manager.dto.CategoryDto;
+import chubby.teu.tuda.core.Category;
+import chubby.teu.tuda.feature.manager.repository.CategoryCRUDRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/categories")
-public class CategoryController {
+@RequestMapping("/api/manager/categories")
+public class CategoryCRUDController {
 
-    private final CategoryRepository categoryRepo;
+    private final CategoryCRUDRepository categoryRepo;
 
-    public CategoryController(CategoryRepository categoryRepo) {
+    public CategoryCRUDController(CategoryCRUDRepository categoryRepo) {
         this.categoryRepo = categoryRepo;
     }
 
@@ -51,7 +51,7 @@ public class CategoryController {
         // Cập nhật các field từ DTO
         existing.setName(categoryDto.getName());
         existing.setDescription(categoryDto.getDescription());
-        existing.setStatus(Category.Status.valueOf(categoryDto.getStatus())); // String -> Enum
+        existing.setStatus(Category.CategoryStatus.valueOf(categoryDto.getStatus())); // String -> Enum
 
         Category updated = categoryRepo.save(existing);
 

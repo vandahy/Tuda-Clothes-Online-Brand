@@ -2,15 +2,19 @@ package chubby.teu.tuda.core;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"carts", "orders"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -42,11 +46,11 @@ public class User {
     @Column(name = "role")
     private UserRole role = UserRole.USER;
 
-    @Column(name = "createdAt")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(name = "createdAt", updatable = false)
+    private LocalDateTime createdAt;
 
     @Column(name = "updatedAt")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Cart> carts;
@@ -54,11 +58,22 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     public enum UserStatus {
         ACTIVE, INACTIVE
     }
 
     public enum UserRole {
-        USER, ADMIN
+        USER, ADMIN, EMPLOYEE, FOUNDER
     }
 }

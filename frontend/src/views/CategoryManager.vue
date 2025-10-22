@@ -72,8 +72,8 @@
 import { ref, onMounted, computed } from "vue";
 
 // --- API URL ---
-const API_URL = "http://localhost:8080/api/categories";
-
+// const API_URL = "http://localhost:8080/api/categories";
+const API_URL = "http://localhost:8080/api/manager/categories";
 // --- State ---
 const categories = ref([]);
 const category = ref({

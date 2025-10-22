@@ -13,6 +13,7 @@
           <option value='EMPLOYEE'>EMPLOYEE</option>
           <option value='ADMIN'>ADMIN</option>
           <option value='FOUNDER'>FOUNDER</option>
+          <option value='USER'>USER</option>
         </select>
         <select v-model='user.status'>
           <option value='ACTIVE'>ACTIVE</option>
@@ -78,7 +79,7 @@
 import { ref, onMounted, computed } from 'vue';
 
 // --- API URL ---
-const API_URL = 'http://localhost:8080/api/users';
+const API_URL = 'http://localhost:8080/api/manager/users';
 
 // --- State ---
 const users = ref([]);

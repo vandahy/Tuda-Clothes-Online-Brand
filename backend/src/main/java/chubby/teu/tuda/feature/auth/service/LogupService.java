@@ -1,7 +1,7 @@
 package chubby.teu.tuda.feature.auth.service;
 
-import chubby.teu.tuda.feature.auth.dto.logup.LogupRequest;
 import chubby.teu.tuda.core.User;
+import chubby.teu.tuda.feature.auth.dto.logup.LogupRequest;
 import chubby.teu.tuda.feature.auth.repository.LogupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package chubby.teu.tuda.feature.productDisplay.mapper;
 
-import chubby.teu.tuda.feature.productDisplay.dto.ProductDTO;
 import chubby.teu.tuda.core.Product;
+import chubby.teu.tuda.feature.productDisplay.dto.ProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

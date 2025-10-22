@@ -75,7 +75,7 @@
 import { ref, onMounted, computed } from "vue";
 
 // API URL
-const API_URL = "http://localhost:8080/api/orders";
+const API_URL = "http://localhost:8080/api/manager/orders";
 
 // State
 const orders = ref([]);

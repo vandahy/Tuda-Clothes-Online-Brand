@@ -1,16 +1,17 @@
-package chubby.teu.tuda.manager.service;
+package chubby.teu.tuda.feature.manager.service;
 
-import chubby.teu.tuda.manager.model.Product;
-import chubby.teu.tuda.manager.repository.ProductRepository;
+import chubby.teu.tuda.core.Product;
+import chubby.teu.tuda.feature.manager.repository.ProductCRUDRepository;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
-public class ProductService {
+public class ProductCRUDService {
 
-    private final ProductRepository repo;
+    private final ProductCRUDRepository repo;
 
-    public ProductService(ProductRepository repo) {
+    public ProductCRUDService(ProductCRUDRepository repo) {
         this.repo = repo;
     }
 

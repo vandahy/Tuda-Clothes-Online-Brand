@@ -4,7 +4,6 @@ import chubby.teu.tuda.core.*;
 import chubby.teu.tuda.feature.cart.dto.AddToCartRequest;
 import chubby.teu.tuda.feature.cart.repository.*;
 import chubby.teu.tuda.feature.cart.service.CartService;
-import chubby.teu.tuda.feature.productDisplay.repository.ProductRepository;
 import chubby.teu.tuda.feature.productDisplay.repository.ProductVariantRepository;
 import chubby.teu.tuda.feature.productDisplay.repository.SizeRepository;
 import jakarta.persistence.EntityNotFoundException;

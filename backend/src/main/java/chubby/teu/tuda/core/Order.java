@@ -24,8 +24,8 @@ public class Order {
     @JoinColumn(name = "username", nullable = false)
     private User user;
 
-    @Column(name = "orderDate")
-    private LocalDateTime orderDate = LocalDateTime.now();
+    @Column(name = "order_date")
+    private LocalDateTime orderDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

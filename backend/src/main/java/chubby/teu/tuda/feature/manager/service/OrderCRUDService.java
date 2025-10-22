@@ -1,17 +1,17 @@
-package chubby.teu.tuda.manager.service;
+package chubby.teu.tuda.feature.manager.service;
 
-import chubby.teu.tuda.manager.model.Order;
-import chubby.teu.tuda.manager.repository.OrderRepository;
+import chubby.teu.tuda.core.Order;
+import chubby.teu.tuda.feature.manager.repository.OrderCRUDRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class OrderService {
+public class OrderCRUDService {
 
-    private final OrderRepository repo;
+    private final OrderCRUDRepository repo;
 
-    public OrderService(OrderRepository repo) {
+    public OrderCRUDService(OrderCRUDRepository repo) {
         this.repo = repo;
     }
 

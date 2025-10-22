@@ -1,17 +1,17 @@
-package chubby.teu.tuda.manager.service;
+package chubby.teu.tuda.feature.manager.service;
 
-import chubby.teu.tuda.manager.model.Category;
-import chubby.teu.tuda.manager.repository.CategoryRepository;
+import chubby.teu.tuda.core.Category;
+import chubby.teu.tuda.feature.manager.repository.CategoryCRUDRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class CategoryService {
+public class CategoryCRUDService {
 
-    private final CategoryRepository repo;
+    private final CategoryCRUDRepository repo;
 
-    public CategoryService(CategoryRepository repo) {
+    public CategoryCRUDService(CategoryCRUDRepository repo) {
         this.repo = repo;
     }
 

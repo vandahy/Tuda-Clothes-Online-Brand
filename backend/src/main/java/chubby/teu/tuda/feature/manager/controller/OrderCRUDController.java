@@ -1,23 +1,23 @@
-package chubby.teu.tuda.manager.controller;
+package chubby.teu.tuda.feature.manager.controller;
 
-import chubby.teu.tuda.manager.dto.OrderDto;
-import chubby.teu.tuda.manager.model.Order;
-import chubby.teu.tuda.manager.model.User;
-import chubby.teu.tuda.manager.repository.OrderRepository;
-import chubby.teu.tuda.manager.repository.UserRepository;
+import chubby.teu.tuda.feature.manager.dto.OrderDto;
+import chubby.teu.tuda.core.Order;
+import chubby.teu.tuda.core.User;
+import chubby.teu.tuda.feature.manager.repository.OrderCRUDRepository;
+import chubby.teu.tuda.feature.manager.repository.UserCRUDRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/orders")
-public class OrderController {
+@RequestMapping("/api/manager/orders")
+public class OrderCRUDController {
 
-    private final OrderRepository orderRepo;
-    private final UserRepository userRepo;
+    private final OrderCRUDRepository orderRepo;
+    private final UserCRUDRepository userRepo;
 
-    public OrderController(OrderRepository orderRepo, UserRepository userRepo) {
+    public OrderCRUDController(OrderCRUDRepository orderRepo, UserCRUDRepository userRepo) {
         this.orderRepo = orderRepo;
         this.userRepo = userRepo;
     }
@@ -44,7 +44,7 @@ public class OrderController {
         Order order = new Order();
         order.setOrderCode(dto.getOrderCode());
         order.setUser(user);
-        order.setStatus(Order.Status.valueOf(dto.getStatus()));
+        order.setStatus(Order.OrderStatus.valueOf(dto.getStatus()));
         order.setTotalAmount(dto.getTotalAmount());
         order.setShippingAddress(dto.getShippingAddress());
 
@@ -65,7 +65,7 @@ public class OrderController {
         Order existing = orderRepo.findById(orderCode)
                 .orElseThrow(() -> new RuntimeException("Order not found: " + orderCode));
 
-        existing.setStatus(Order.Status.valueOf(dto.getStatus()));
+        existing.setStatus(Order.OrderStatus.valueOf(dto.getStatus()));
         existing.setTotalAmount(dto.getTotalAmount());
         existing.setShippingAddress(dto.getShippingAddress());
 
