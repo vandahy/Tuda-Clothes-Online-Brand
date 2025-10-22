@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
+import UserManager from "../views/UserManager.vue";
 
 const routes = [
   {
@@ -7,6 +8,12 @@ const routes = [
     name: 'Home',
     component: Home
   },
+  {
+    path: '/UserManager',
+    name: 'UserManager',
+    component: UserManager
+  },
+
 
   {
     path: '/signup',
@@ -43,6 +50,7 @@ const routes = [
     name: 'Account',
     component: () => import('../views/AccountManagement.vue')
   },
+  
   {
     path: "/products/:code",
     name: "ProductDetail",
