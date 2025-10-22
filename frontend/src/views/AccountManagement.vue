@@ -44,24 +44,35 @@
         <main class="account-content">
           <div class="card" v-show="activeTab === 'info'">
             <h2 class="content-title">Account Information</h2>
+            
+            <div v-if="error" style="padding: 10px; margin-bottom: 15px; background-color: #f8d7da; color: #721c24; border-radius: 4px;">
+              {{ error }}
+            </div>
+            
+            <div v-if="message" style="padding: 10px; margin-bottom: 15px; background-color: #d4edda; color: #155724; border-radius: 4px;">
+              {{ message }}
+            </div>
+            
             <form class="form info-form" @submit.prevent="submitForm">
               <div class="form-group full-width">
-                <label>Name</label>
-                <input type="text" placeholder="Your name"/>
+                <label>Full Name</label>
+                <input v-model="profile.fullName" type="text" placeholder="Your full name"/>
               </div>
               <div class="form-group">
                 <label>Email</label>
-                <input type="email" placeholder="Your email"/>
+                <input v-model="profile.email" type="email" placeholder="Your email"/>
               </div>
               <div class="form-group">
                 <label>Phone Number</label>
-                <input type="text" placeholder="Your number" />
+                <input v-model="profile.phone" type="text" placeholder="Your number" />
               </div>
               <div class="form-group full-width">
                 <label>Address</label>
-                <input type="text" placeholder="Your address" />
+                <input v-model="profile.address" type="text" placeholder="Your address" />
               </div>
-              <button type="submit" class="update-button">Update</button>
+              <button type="submit" class="update-button" :disabled="profileLoading">
+                {{ profileLoading ? 'Updating...' : 'Update' }}
+              </button>
             </form>
           </div>
 
@@ -112,20 +123,31 @@
 
             <div class="card" v-show="activeTab === 'security'">
               <h2 class="content-title">Change Password</h2>
-              <form class="form security-form" @submit.prevent="changePassword">
+              
+              <div v-if="passwordError" style="padding: 10px; margin-bottom: 15px; background-color: #f8d7da; color: #721c24; border-radius: 4px;">
+                {{ passwordError }}
+              </div>
+              
+              <div v-if="passwordMessage" style="padding: 10px; margin-bottom: 15px; background-color: #d4edda; color: #155724; border-radius: 4px;">
+                {{ passwordMessage }}
+              </div>
+              
+              <form class="form security-form" @submit.prevent="handleChangePassword">
                 <div class="form-group">
                   <label>Current Password</label>
-                  <input type="password" placeholder="Current Password" />
+                  <input v-model="currentPassword" type="password" placeholder="Current Password" />
                 </div>
                 <div class="form-group">
                   <label>New Password</label>
-                  <input type="password" placeholder="New Password"/>
+                  <input v-model="newPassword" type="password" placeholder="New Password"/>
                 </div>
                 <div class="form-group full-width">
                   <label>Confirm New Password</label>
-                  <input type="password" placeholder="Confirm New Password"/>
+                  <input v-model="confirmPassword" type="password" placeholder="Confirm New Password"/>
                 </div>
-                <button type="submit" class="update-button">Change Password</button>
+                <button type="submit" class="update-button" :disabled="passwordLoading">
+                  {{ passwordLoading ? 'Changing...' : 'Change Password' }}
+                </button>
               </form>
             </div>
 
@@ -195,20 +217,43 @@
     :isVisible="!!viewingOrder" 
     @close="closeModal"
     :orderId="viewingOrder?.orderId"
-    :products="viewingOrder?.products"
-    :recipientName="viewingOrder?.recipientName"
+    :orderDate="viewingOrder?.orderDate"
+    :orderStatus="viewingOrder?.orderStatus"
+    :paymentMethod="viewingOrder?.paymentMethod"
+    :paymentStatus="viewingOrder?.paymentStatus"
+    :subtotal="viewingOrder?.subtotal"
+    :shippingFee="viewingOrder?.shippingFee"
+    :discountAmount="viewingOrder?.discountAmount"
     :total="viewingOrder?.total"
+    :customerName="viewingOrder?.recipientName"
+    :customerPhone="viewingOrder?.recipientPhone"
+    :recipientName="viewingOrder?.recipientName"
+    :recipientPhone="viewingOrder?.recipientPhone"
+    :recipientAddress="viewingOrder?.recipientAddress"
+    :products="viewingOrder?.products"
     />
 </template>
 
 <script setup>
 import '../assets/css/accountManagement.css'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useOrderHistory } from '../composables/userOrderHistory'
 import OrderDetailModal from '../components/OrderDetailModal.vue'
 import { useProductHistory } from '../composables/productHistory'
+import { useUserProfile } from '../composables/useUserProfile'
+import { useChangePassword } from '../composables/useChangePassword'
 
 const { productList, loading, error, fetchProductHistory } = useProductHistory()
+const { profile, loading: profileLoading, error: profileError, message, fetchProfile, updateProfile } = useUserProfile()
+const { 
+  currentPassword, 
+  newPassword, 
+  confirmPassword, 
+  loading: passwordLoading, 
+  error: passwordError, 
+  message: passwordMessage, 
+  changePassword: handleChangePassword 
+} = useChangePassword()
 const isModalVisible = ref(false) 
 
 const handleProductionTab = async () => {
@@ -246,19 +291,15 @@ const activeTab = ref('info')
 
 // Logout function
 function logout() {
-  alert('Logged out!')
-  // Add logic to remove token and redirect to home
-  // localStorage.removeItem('token');
-  // window.location.href = '/';
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+  alert('Logged out successfully!')
+  window.location.href = '/'
 }
 
-// 2 old submit functions
-function submitForm() {
-  alert('Information updated!');
-}
-
-function changePassword() {
-  alert('Password changed!');
+// Submit form - update profile
+async function submitForm() {
+  await updateProfile()
 }
 
 watch(activeTab, (newTab) => {
@@ -267,5 +308,10 @@ watch(activeTab, (newTab) => {
   } else if (newTab === 'production') {
     fetchProductHistory()
   }
+})
+
+// Load profile khi vào trang
+onMounted(() => {
+  fetchProfile()
 })
 </script>

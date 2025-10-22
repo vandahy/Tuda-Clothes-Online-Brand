@@ -1,10 +1,7 @@
 package chubby.teu.tuda.core;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "product_variants",
@@ -37,11 +34,13 @@ public class ProductVariant {
     // Quan hệ Many-to-One với Product
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productCode", insertable = false, updatable = false)
+    @ToString.Exclude
     private Product product;
 
     // Quan hệ Many-to-One với Size
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sizeId", insertable = false, updatable = false)
+    @ToString.Exclude
     private Size size;
 
     // Constructor tiện lợi

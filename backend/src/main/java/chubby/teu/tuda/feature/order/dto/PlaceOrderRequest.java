@@ -52,8 +52,5 @@ public class PlaceOrderRequest {
         private String city;
         @NotBlank
         private String ward;
-        @NotBlank
-        private String district;
-
     }
 }

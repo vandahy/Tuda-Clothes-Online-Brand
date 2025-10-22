@@ -3,12 +3,12 @@
     <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h2 class="modal-title">Order Details: {{ order?.orderCode || 'N/A' }}</h2>
+          <h2 class="modal-title">Order Details: {{  ' '+ orderId || 'N/A' }}</h2>
           <button type="button" class="btn-close" @click="$emit('close')"></button>
         </div>
         <div class="modal-body">
           <div class="order-meta">
-            Order Date: {{ order?.orderDate ? new Date(order.orderDate).toLocaleString('en-US') : 'N/A' }}
+            Order Date: {{ orderDate ? new Date(orderDate).toLocaleString('en-US') : 'N/A' }}
           </div>
 
           <div class="info-row">
@@ -16,6 +16,7 @@
             <div class="info-box payment-summary"> 
               <h6>Payment</h6>
               <p class="payment-method">{{ paymentMethod || 'N/A' }}</p>
+              <p style="font-size: 0.8rem; color: #666;">Status: {{ paymentStatus || 'N/A' }}</p>
               <hr>
               <div class="summary-row">
                 <span>Subtotal (products):</span>
@@ -87,15 +88,17 @@ const props = defineProps({
   isVisible: { type: Boolean, required: true },
   orderId: { type: String, default: "" },
   orderDate: { type: String, default: "" },
+  orderStatus: { type: String, default: "" },
   staffName: { type: String, default: "" },
   staffEmail: { type: String, default: "" },
-  customerName: { type: String, default: "" }, // Prop này vẫn còn nhưng không dùng trong template
-  customerPhone: { type: String, default: "" }, // Prop này vẫn còn nhưng không dùng trong template
+  customerName: { type: String, default: "" },
+  customerPhone: { type: String, default: "" }, 
   recipientName: { type: String, default: "" },
   recipientPhone: { type: String, default: "" },
   recipientAddress: { type: String, default: "" },
   products: { type: Array, default: () => [] },
   paymentMethod: { type: String, default: "" },
+  paymentStatus: { type: String, default: "" },
   shippingFee: { type: Number, default: 0 },
   discountAmount: { type: Number, default: 0 },
   subtotal: { type: Number, default: 0 },
@@ -119,7 +122,7 @@ const emit = defineEmits(['close'])
   display: flex; flex-direction: column;
 }
 .modal-dialog.modal-dialog-centered {
-  display: flex; align-items: center; min-height: calc(100% - 3.5rem);
+  display: flex; align-items: center;
 }
 .modal-content {
   display: flex; flex-direction: column; width: 100%;

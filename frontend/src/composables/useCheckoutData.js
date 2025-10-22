@@ -10,8 +10,6 @@ export function useCheckoutData() {
         firstName: '', lastName: '', email: '', phone: '',
         company: '', address: '', apartment: '',
         city: '',
-        ward: '',
-        district: '',
     })
     const payment = ref({
         method: 'cod', cardName: '', cardNumber: '', expiry: '', cvv: ''
@@ -55,7 +53,6 @@ export function useCheckoutData() {
             customer.value.phone = data.phone || '';
             customer.value.address = data.address || '';
             customer.value.city = data.city || "";
-            customer.value.district = data.district || "";
             customer.value.ward = data.ward || "";
             cartCode.value = data.cartCode || null;
 
@@ -149,9 +146,9 @@ export function useCheckoutData() {
     }
 
     // --- 5. LIFECYCLE ---
-    onMounted(() => {
-        fetchCheckoutData();
-    });
+    // onMounted(() => {
+    //     fetchCheckoutData();
+    // });
 
     // --- 6. TRẢ VỀ ---
     return {
@@ -166,7 +163,7 @@ export function useCheckoutData() {
         total,
         applyVoucher,
         increaseQty,
-        decreaseQty
-        // fetchCheckoutData (không cần trả về vì onMounted đã gọi)
+        decreaseQty,
+        fetchCheckoutData
     }
 }

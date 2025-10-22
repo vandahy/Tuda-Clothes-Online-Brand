@@ -1,6 +1,6 @@
 package chubby.teu.tuda.feature.auth.controller;
 
-import chubby.teu.tuda.feature.auth.Component.JwtTokenProvider;
+import chubby.teu.tuda.feature.auth.component.JwtTokenProvider;
 import chubby.teu.tuda.feature.auth.dto.login.LoginRequest;
 import chubby.teu.tuda.feature.auth.dto.login.LoginResponse;
 import chubby.teu.tuda.feature.auth.service.LoginService;

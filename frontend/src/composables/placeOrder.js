@@ -2,27 +2,33 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-export function usePlaceOrder(customer, payment, cartCode) {
+export function usePlaceOrder(customer, payment, cartCode, selectedProvinceCode, selectedWardCode, provinces, wards) {
 
     const router = useRouter();
-    const isPlacingOrder = ref(false); // Thêm state loading
+    const isPlacingOrder = ref(false);
 
     const placeOrder = async () => {
-        // 1. Validation (Giống code logic `placeOrder` của tôi)
-        if (!customer.value.firstName || !customer.value.phone || !customer.value.address || !customer.value.city || !customer.value.ward || !customer.value.district) {
-            alert('Vui lòng điền đầy đủ Tên, SĐT, và Địa chỉ (Số nhà, Phường, Quận, Thành phố)');
+        // 1. Validation
+        if (!customer.value.firstName || !customer.value.phone || !customer.value.address || !selectedProvinceCode.value || !selectedWardCode.value) {
+            alert('Vui lòng điền đầy đủ thông tin địa chỉ (Tên, SĐT, Số nhà, Tỉnh/Thành phố, Phường/Xã)');
             return;
         }
 
-        // 2. Xây dựng JSON body
+        // 2. Lookup tên tỉnh/phường từ code
+        const selectedProvince = provinces.value.find(p => p.Code === selectedProvinceCode.value);
+        const selectedWard = wards.value.find(w => w.Code === selectedWardCode.value);
+
+        const provinceName = selectedProvince ? selectedProvince.FullName : selectedProvinceCode.value;
+        const wardName = selectedWard ? selectedWard.FullName : selectedWardCode.value;
+
+        // 3. Xây dựng JSON body
         const orderRequest = {
             cartCode: cartCode.value,
             paymentMethod: payment.value.method.toUpperCase(),
             shippingAddress: {
                 street: customer.value.address,
-                ward: customer.value.ward,
-                district: customer.value.district,
-                city: customer.value.city
+                ward: wardName,        // Gửi tên
+                city: provinceName      // Gửi tên
             }
         };
 

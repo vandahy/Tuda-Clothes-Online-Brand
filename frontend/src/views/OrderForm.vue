@@ -63,13 +63,29 @@
                 <input v-model="customer.address" class="form-control" placeholder="Address: *25/5B đường số 9" />
               </div>
               <div class="mb-2">
-                <input v-model="customer.ward" class="form-control" placeholder="Ward: *Phường Bình Trưng Nam" />
+                <select id="province" v-model="selectedProvinceCode" @change="onProvinceChange" class="form-control">
+                  <option value="" disabled>-- Chọn Tỉnh/Thành phố --</option>
+                  <option 
+                    v-for="province in provinces" 
+                    :key="province.Code" 
+                    :value="province.Code"
+                  >
+                    {{ province.FullName }}
+                  </option>
+                </select>
               </div>
               <div class="mb-2">
-                <input v-model="customer.district" class="form-control" placeholder="District: *Quận Cam" />
-              </div>
-              <div class="mb-2">
-                <input v-model="customer.city" class="form-control" placeholder="City: *Hồ Chí Minh" />
+                <select 
+                  id="ward" 
+                  v-model="selectedWardCode" 
+                  :disabled="!selectedProvinceCode"
+                  class="form-control"
+                >
+                  <option value="" disabled>-- Chọn Phường/Xã --</option>
+                  <option v-for="ward in wards" :key="ward.Code" :value="ward.Code">
+                    {{ ward.FullName }}
+                  </option>
+                </select>
               </div>
             </div>
           </div>
@@ -155,9 +171,27 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import '../assets/css/checkout.css'
 import { useCheckoutData } from '../composables/useCheckoutData'
 import { usePlaceOrder } from '../composables/placeOrder.js'
+import vietnamData from '../assets/json/address_data.json'
+
+const provinces = ref([])
+const wards = ref([])
+
+const selectedProvinceCode = ref('')
+const selectedWardCode = ref('')
+
+onMounted(() => {
+  provinces.value = vietnamData
+})
+
+const onProvinceChange = () => {
+  const selectedProvince = provinces.value.find(p => p.Code === selectedProvinceCode.value)
+  wards.value = selectedProvince ? selectedProvince.Wards : []
+  selectedWardCode.value = ''
+}
 
 const {
   products,
@@ -177,5 +211,5 @@ const {
 const {
   placeOrder,
   isPlacingOrder
-} = usePlaceOrder(customer, payment, cartCode);
+} = usePlaceOrder(customer, payment, cartCode, selectedProvinceCode, selectedWardCode, provinces, wards);
 </script>

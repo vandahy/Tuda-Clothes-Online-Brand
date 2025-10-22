@@ -2,8 +2,6 @@ package chubby.teu.tuda.feature.order.repository;
 
 import chubby.teu.tuda.core.Order;
 import chubby.teu.tuda.core.OrderDetail;
-import chubby.teu.tuda.feature.order.dto.OrderDetailRequest;
-import chubby.teu.tuda.feature.order.dto.OrderItemRequest;
 import chubby.teu.tuda.feature.order.dto.ProductListRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

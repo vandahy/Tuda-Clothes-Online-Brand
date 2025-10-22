@@ -1,4 +1,4 @@
-package chubby.teu.tuda.feature.auth.Component;
+package chubby.teu.tuda.feature.auth.component;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

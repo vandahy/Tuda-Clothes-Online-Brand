@@ -20,20 +20,6 @@ public class OrdersDetailServiceImpl implements OrdersDetailService {
     @Autowired
     PaymentRepository paymentRepository;
 
-//    @Override
-//    public OrderDetailRequest getOrderDetail(String orderCode) {
-//        OrderDetailRequest orderDetail = ordersDetailRepository.findOrderSummaryByOrderCode(orderCode);
-//        List<OrderItemRequest> items = ordersDetailRepository.findOrderItemsByOrderCode(orderCode);
-//        Payment payment = paymentRepository.findByOrder_OrderCode(orderCode).orElse(null);
-//        if (payment != null) {
-//            orderDetail.setPaymentMethod(payment.getMethod().toString());
-//            orderDetail.setPaymentStatus(payment.getStatus().toString());
-//        }
-//        orderDetail.setItems(items);
-//        return orderDetail;
-//    }
-
-
     @Override
     public List<ProductListRequest> getAllPurchasedItems(String username) {
         return ordersDetailRepository.findAllPurchasedItemsByUsername(username);

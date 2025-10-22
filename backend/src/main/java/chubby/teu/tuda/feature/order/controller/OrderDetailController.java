@@ -2,7 +2,6 @@ package chubby.teu.tuda.feature.order.controller;
 
 import chubby.teu.tuda.core.User;
 import chubby.teu.tuda.feature.cart.repository.UserRepository;
-import chubby.teu.tuda.feature.order.dto.OrderDetailRequest;
 import chubby.teu.tuda.feature.order.dto.ProductListRequest;
 import chubby.teu.tuda.feature.order.service.OrdersDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +20,6 @@ public class OrderDetailController {
 
     @Autowired
     private UserRepository userRepository;
-
-//    @GetMapping
-//    public ResponseEntity<OrderDetailRequest> orderDetail(@PathVariable String codeOrder) {
-//        OrderDetailRequest orderDetail = ordersDetailService.getOrderDetail(codeOrder);
-//        return ResponseEntity.ok(orderDetail);
-//    }
 
     @GetMapping("/product-list")
     public ResponseEntity<List<ProductListRequest>> getMyPurchasedItems(Principal principal) {

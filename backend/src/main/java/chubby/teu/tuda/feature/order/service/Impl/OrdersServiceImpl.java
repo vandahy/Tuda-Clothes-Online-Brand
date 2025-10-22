@@ -93,8 +93,7 @@ public class OrdersServiceImpl implements OrdersService {
 
         PlaceOrderRequest.ShippingAddress shipping = req.getShippingAddress();
         order.setShippingAddress(
-                String.format("%s, %s, %s, %s", shipping.getStreet(), shipping.getCity(), shipping.getWard(),
-                        shipping.getDistrict()));
+                String.format("%s, %s, %s", shipping.getStreet(), shipping.getCity(), shipping.getWard()));
 
         ordersRepository.save(order);
 
@@ -108,12 +107,13 @@ public class OrdersServiceImpl implements OrdersService {
 
             OrderDetail od = new OrderDetail();
             od.setOrder(order);
-
             od.setProduct(p);
+            od.setVariant(v); // Lưu variant
             od.setQuantity(ci.getQuantity());
             BigDecimal unitPrice = p.getPrice().subtract(p.getDiscount());
             od.setUnitPrice(unitPrice);
             od.setSubTotal(unitPrice.multiply(BigDecimal.valueOf(ci.getQuantity())));
+            od.setDiscount(p.getDiscount() != null ? p.getDiscount() : BigDecimal.ZERO);
             ordersDetailRepository.save(od);
 
             // Deduct stock
@@ -181,8 +181,6 @@ public class OrdersServiceImpl implements OrdersService {
 
         OrderResponse.ShippingAddress responseShippingAddress = new OrderResponse.ShippingAddress();
         responseShippingAddress.setStreet(shipping.getStreet());
-        responseShippingAddress.setStreet(shipping.getWard());
-        responseShippingAddress.setCountry(shipping.getDistrict());
         responseShippingAddress.setCity(shipping.getCity());
 
         OrderResponse resp = new OrderResponse();
@@ -254,13 +252,19 @@ public class OrdersServiceImpl implements OrdersService {
         response.setDiscountAmount(BigDecimal.ZERO);
 
         List<OrderItemRequest> items = orderDetails.stream()
-                .map(od -> new OrderItemRequest(
-                        od.getProduct().getProductCode(),
-                        od.getProduct().getName(),
-                        od.getQuantity(),
-                        od.getUnitPrice(),
-                        od.getProduct().getDiscount() != null ? od.getProduct().getDiscount() : BigDecimal.ZERO,
-                        od.getSubTotal()))
+                .map(od -> {
+                    // Lấy ProductVariant để có size
+                    ProductVariant variant = od.getVariant();
+                    String size = variant != null ? variant.getSize().getName() : "N/A";
+
+                    return new OrderItemRequest(
+                            od.getProduct().getProductCode(),
+                            od.getProduct().getName() + "-" + size,
+                            od.getQuantity(),
+                            od.getUnitPrice(),
+                            od.getDiscount() != null ? od.getDiscount() : BigDecimal.ZERO,
+                            od.getSubTotal());
+                })
                 .collect(Collectors.toList());
 
         response.setItems(items);

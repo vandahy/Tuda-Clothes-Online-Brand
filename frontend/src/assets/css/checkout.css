@@ -626,3 +626,23 @@ a {
 .table th {
   vertical-align: top;
 }
+
+/* Select dropdown positioning */
+.form-control {
+  position: relative;
+  z-index: 1;
+}
+
+.card .form-group select.form-control {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Make card accommodate large dropdowns */
+.card {
+  overflow: visible !important;
+}
+
+.card-body {
+  overflow: visible !important;
+}

@@ -12,7 +12,6 @@ public class CheckOutRequest {
     private String cartCode;
     private String address;
     private String ward;
-    private String district;
     private String city;
     private List<CartItemRequest> items;
 }

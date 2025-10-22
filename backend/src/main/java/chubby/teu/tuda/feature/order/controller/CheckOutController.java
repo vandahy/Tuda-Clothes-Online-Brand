@@ -54,12 +54,10 @@ public class CheckOutController {
                                 .filter(pi -> Boolean.TRUE.equals(pi.getIsPrimary()))
                                 .map(ProductImage::getImageUrl)
                                 .findFirst()
-                                .orElseGet(() ->
-                                        product.getImages().stream()
-                                                .findFirst()
-                                                .map(ProductImage::getImageUrl)
-                                                .orElse("DEFAULT_IMAGE")
-                                );
+                                .orElseGet(() -> product.getImages().stream()
+                                        .findFirst()
+                                        .map(ProductImage::getImageUrl)
+                                        .orElse("DEFAULT_IMAGE"));
                     }
                     dto.setImageUrl(imageUrl);
                     dto.setVariantID(item.getVariant().getVariantId().intValue());
@@ -79,13 +77,14 @@ public class CheckOutController {
         if (fullAddress != null && !fullAddress.isEmpty()) {
             String[] parts = fullAddress.split(", ");
 
-            if (parts.length == 4) {
+            if (parts.length >= 3) {
                 checkoutDTO.setAddress(parts[0]);
                 checkoutDTO.setWard(parts[1]);
-                checkoutDTO.setDistrict(parts[2]);
-                checkoutDTO.setCity(parts[3]);
+                checkoutDTO.setCity(parts[2]);
+            } else if (parts.length == 2) {
+                checkoutDTO.setAddress(parts[0]);
+                checkoutDTO.setCity(parts[1]);
             } else {
-                // Trường hợp dữ liệu rác/sai: dồn tất cả vào ô số nhà
                 checkoutDTO.setAddress(fullAddress);
             }
         }
