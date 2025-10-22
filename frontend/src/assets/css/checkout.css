@@ -240,7 +240,6 @@ a {
 .card {
   background: #fff;
   border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
 }
 
 .card.shadow-sm {

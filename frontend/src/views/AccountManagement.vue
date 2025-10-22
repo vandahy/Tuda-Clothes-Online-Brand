@@ -1,205 +1,271 @@
 <template>
-  <div class="container">
-    <h1>My Account</h1>
+  <div class="account-page-bg">
+    <div class="container-management">
+      <h1 class="h1-account">My Account</h1>
 
-    <div class="tabs">
-      <button type="button" :class="['tab', activeTab === 'info' ? 'active' : '']" @click="activeTab = 'info'">Account Information</button>
-      <button type="button" :class="['tab', activeTab === 'security' ? 'active' : '']" @click="activeTab = 'security'">Change Password</button>
-    </div>
+      <div class="account-layout">
 
-    <!-- Tab: Account Info -->
-    <div class="card" v-show="activeTab === 'info'">
-      <form class="form info-form" @submit.prevent="submitForm">
+        <aside class="account-sidebar">
+          <ul class="sidebar-menu">
+            <li 
+              :class="['sidebar-item', activeTab === 'info' ? 'active' : '']" 
+              @click="activeTab = 'info'"
+            >
+              Account Information
+            </li>
+            
+            <li 
+              :class="['sidebar-item', activeTab === 'orders' ? 'active' : '']" 
+              @click="activeTab = 'orders'"
+            >
+              Order History
+            </li>
 
-        <div class="form-group full-width">
-          <label>Name</label>
-          <input type="text"  placeholder="Your name"/>
-        </div>
+            <li 
+              :class="['sidebar-item', activeTab === 'security' ? 'active' : '']" 
+              @click="activeTab = 'security'"
+            >
+              Change Password
+            </li>
 
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email"   placeholder="Your email"/>
-        </div>
+            <li 
+              :class="['sidebar-item', activeTab === 'production' ? 'active' : '']" 
+              @click="activeTab = 'production'"
+            >
+              Purchased Products
+            </li>
 
-        <div class="form-group">
-          <label>Phone Number</label>
-          <input type="text"  placeholder="Your number" />
-        </div>
+            <li class="sidebar-item" @click="logout">
+              Logout
+            </li>
+          </ul>
+        </aside>
 
-        <div class="form-group full-width">
-          <label>Address</label>
-          <input type="text"  placeholder="Your address" />
-        </div>
+        <main class="account-content">
+          <div class="card" v-show="activeTab === 'info'">
+            <h2 class="content-title">Account Information</h2>
+            <form class="form info-form" @submit.prevent="submitForm">
+              <div class="form-group full-width">
+                <label>Name</label>
+                <input type="text" placeholder="Your name"/>
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" placeholder="Your email"/>
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="text" placeholder="Your number" />
+              </div>
+              <div class="form-group full-width">
+                <label>Address</label>
+                <input type="text" placeholder="Your address" />
+              </div>
+              <button type="submit" class="update-button">Update</button>
+            </form>
+          </div>
 
-        <button type="submit" class="update-button">Update</button>
-      </form>
-    </div>
+          <div class="card" v-show="activeTab === 'orders'">
+              <h2 class="content-title">Order History</h2>
+              
+              <div v-if="isLoading" style="text-align: center; padding: 50px;">
+                <p>Loading data...</p>
+              </div>
+              
+              <div v-else-if="!orders.length" class="empty-orders" style="text-align: center; padding: 50px;">
+                <img src="https://i.imgur.com/g8f0gN4.png" alt="No orders" style="width: 100px; opacity: 0.5;">
+                <p style="color: #777; margin-top: 15px;">You have no orders yet.</p>
+              </div>
 
-    <!-- Tab: Security -->
-    <div class="card" v-show="activeTab === 'security'">
-      <form class="form security-form" @submit.prevent="changePassword">
-        <div class="form-group">
-          <label>Current Password</label>
-          <input type="password"  placeholder="Current Password" />
-        </div>
+              <div v-else class="table-responsive">
+                <table class="table table-hover align-middle order-history-table">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Order Code</th>
+                      <th>Order Date</th>
+                      <th class="text-end">Total Amount</th>
+                      <th class="text-center">Status</th>
+                      <th class="text-center">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="order in orders" :key="order.orderCode">
+                      <td class="fw-semibold">{{ order.orderCode || 'N/A' }}</td>
+                      <td>{{ new Date(order.orderDate).toLocaleDateString('vi-VN') }}</td>
+                      <td class="text-end fw-bold">{{ order.totalAmount.toLocaleString() }}₫</td>
+                      
+                      <td class="text-center">
+                        <span :class="['badge', getStatusClass(order.orderStatus)]">
+                          {{ order.orderStatus }}
+                        </span>
+                      </td>
+                      <td class="text-center">
+                        <button class="btn btn-sm btn-outline-dark"  @click="viewOrderDetails(order.orderCode)">
+                          Detail
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
 
-        <div class="form-group">
-          <label>New Password</label>
-          <input type="password"  placeholder="New Password"/>
-        </div>
+            <div class="card" v-show="activeTab === 'security'">
+              <h2 class="content-title">Change Password</h2>
+              <form class="form security-form" @submit.prevent="changePassword">
+                <div class="form-group">
+                  <label>Current Password</label>
+                  <input type="password" placeholder="Current Password" />
+                </div>
+                <div class="form-group">
+                  <label>New Password</label>
+                  <input type="password" placeholder="New Password"/>
+                </div>
+                <div class="form-group full-width">
+                  <label>Confirm New Password</label>
+                  <input type="password" placeholder="Confirm New Password"/>
+                </div>
+                <button type="submit" class="update-button">Change Password</button>
+              </form>
+            </div>
 
-        <div class="form-group full-width">
-          <label>Confirm New Password</label>
-          <input type="password" placeholder="Confirm New Password"/>
-        </div>
+            <div class="card" v-show="activeTab === 'production'">
+            <h2 class="content-title">Purchased Products</h2>
+            
+            <div v-if="loading" style="text-align: center; padding: 50px;">
+              <p>Loading data...</p>
+            </div>
+            
+            <div v-else-if="error" style="text-align: center; padding: 50px; color: red;">
+              <p>Error: {{ error }}</p>
+            </div>
+            
+            <div v-else-if="!productList.length" class="empty-orders" style="text-align: center; padding: 50px;">
+              <img src="https://i.imgur.com/g8f0gN4.png" alt="No products" style="width: 100px; opacity: 0.5;">
+              <p style="color: #777; margin-top: 15px;">You haven't purchased any products yet.</p>
+            </div>
 
-        <button type="submit" class="update-button">Change Password</button>
-      </form>
+            <div v-else class="table-responsive">
+              <table class="table table-hover align-middle order-history-table">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 10%;">Image</th>
+                    <th style="width: 25%;">Product Name</th>
+                    <th style="width: 15%;">Order Code</th>
+                    <th style="width: 15%;">Order Date</th>
+                    <th style="width: 10%;">Quantity</th>
+                    <th style="width: 15%; text-align: right;">Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="product in productList" :key="product.id">
+                    <!-- Image -->
+                    <td>
+                      <img 
+                        :src="product.imageUrl || 'https://via.placeholder.com/50'" 
+                        :alt="product.name"
+                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"
+                      />
+                    </td>
+                    
+                    <!-- Product Name -->
+                    <td class="fw-semibold">{{ product.productName }}</td>
+                    
+                    <!-- Order Code -->
+                    <td>{{ product.orderCode }}</td>
+                    
+                    <!-- Order Date -->
+                    <td>{{ new Date(product.orderDate).toLocaleDateString('en-US') }}</td>
+                    
+                    <!-- Quantity -->
+                    <td class="text-center">{{ product.quantity }}</td>
+                    
+                    <!-- Price -->
+                    <td class="text-end fw-bold">{{ product.price.toLocaleString() }}₫</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   </div>
+  <OrderDetailModal
+    :isVisible="!!viewingOrder" 
+    @close="closeModal"
+    :orderId="viewingOrder?.orderId"
+    :products="viewingOrder?.products"
+    :recipientName="viewingOrder?.recipientName"
+    :total="viewingOrder?.total"
+    />
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import '../assets/css/accountManagement.css'
+import { ref, watch } from 'vue'
+import { useOrderHistory } from '../composables/userOrderHistory'
+import OrderDetailModal from '../components/OrderDetailModal.vue'
+import { useProductHistory } from '../composables/productHistory'
 
-const activeTab = ref('info')
+const { productList, loading, error, fetchProductHistory } = useProductHistory()
+const isModalVisible = ref(false) 
 
-const form = ref({
-  org: 'Thời Trang Nitimo',
-  fullName: 'Nguyễn Khánh',
-  email: 'fpt@gmail.com',
-  phone: '',
-  address: '',
+const handleProductionTab = async () => {
+  if (activeTab.value === 'production') {
+    await fetchProductHistory()
+  }
+}
+
+function toggleModal() {
+  isModalVisible.value = !isModalVisible.value 
+}
+
+function getStatusClass(status) {
+  switch (status?.toUpperCase()) {
+    case 'PENDING':   return 'status-pending';
+    case 'CONFIRMED': return 'status-confirmed';
+    case 'SHIPPING':  return 'status-shipping';
+    case 'COMPLETED': return 'status-completed';
+    case 'CANCELLED': return 'status-cancelled';
+    default:          return 'status-default';
+  }
+}
+
+const {
+  isLoading,
+  viewingOrder, 
+  orders,
+  fetchOrderHistory,
+  viewOrderDetails,
+  closeModal     
+} = useOrderHistory();
+
+
+const activeTab = ref('info') 
+
+// Logout function
+function logout() {
+  alert('Logged out!')
+  // Add logic to remove token and redirect to home
+  // localStorage.removeItem('token');
+  // window.location.href = '/';
+}
+
+// 2 old submit functions
+function submitForm() {
+  alert('Information updated!');
+}
+
+function changePassword() {
+  alert('Password changed!');
+}
+
+watch(activeTab, (newTab) => {
+  if (newTab === 'orders') {
+    fetchOrderHistory()
+  } else if (newTab === 'production') {
+    fetchProductHistory()
+  }
 })
-
-const passwordForm = ref({
-  current: '',
-  newPassword: '',
-  confirmPassword: '',
-})
-
-
 </script>
-
-<style scoped>
-.container {
-  width: 800px;
-  margin: 120px auto;
-  background-color: #fff;
-  padding: 32px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
-}
-
-h1 {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-.tabs {
-  display: flex;
-  justify-content: flex-start; 
-  border-bottom: 2px solid #ddd;
-  margin-bottom: 40px; 
-  position: relative;
-  gap: 16px;
-}
-
-.tab {
-  padding: 10px 24px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  color: #555;
-  font-size: 16px;
-  position: relative;
-}
-
-.tab.active {
-  color: orange;
-}
-
-.tab.active::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background-color: orange;
-}
-
-.card {
-  min-height: 360px; 
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; 
-  gap: 16px;
-}
-
-.form {
-  display: grid;
-  grid-template-columns: 1fr; 
-  gap: 24px;
-}
-
-.info-form {
-  grid-template-columns: 1fr 1fr;
-}
-
-.security-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr; 
-  gap: 24px;
-}
-.security-form .full-width {
-  grid-column: span 2;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-label {
-  margin-bottom: 6px;
-  font-weight: 500;
-  font-size: 15px;
-}
-
-input, select {
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 16px;
-  width: 100%;
-  box-sizing: border-box;
-}
-.full-width {
-  grid-column: 1;
-}
-
-.info-form .full-width {
-  grid-column: span 2;
-}
-
-.update-button {
-  grid-column: span 2;
-  padding: 12px 20px;
-  background-color: black;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.update-button:hover {
-  background-color: black;
-}
-</style>
-
