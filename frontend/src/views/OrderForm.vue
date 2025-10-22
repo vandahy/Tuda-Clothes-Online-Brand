@@ -205,8 +205,14 @@ const {
   total,
   applyVoucher,
   increaseQty,
-  decreaseQty
+  decreaseQty,
+  fetchCheckoutData
 } = useCheckoutData();
+
+// Fetch checkout data khi component mount
+onMounted(() => {
+  fetchCheckoutData();
+});
 
 const {
   placeOrder,
