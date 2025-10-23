@@ -26,7 +26,10 @@
     </nav>
 
     <div class="menu-icon flex">
-      <i class="fa-solid fa-cart-shopping c515151" id="menu-icon" @click="toggleSidebarCart"></i>
+      <div class="cart-icon-container" style="position: relative;">
+        <i class="fa-solid fa-cart-shopping c515151" id="menu-icon" @click="toggleSidebarCart"></i>
+        <span v-if="cartItems.length > 0" class="cart-badge">{{ cartItems.length }}</span>
+      </div>
       <router-link>
         <i class="fa-solid fa-user c515151" id="menu-icon" @click="goToUserPage"></i>
       </router-link>
@@ -95,7 +98,7 @@
              <div class="total-price">{{ formatPrice(cartTotal) }}</div>
          </div>
          <div class="cart-buttons flex flex-col gap-2">
-        <router-link to="/order-form" @click="closeSidebar" class="total-buy">Buy Now</router-link>
+        <button @click="handleBuyNow" class="total-buy">Buy Now</button>
       </div>
      </div>
      <div @click="cleanCart" class="clean-btn"><p>Clean All</p></div>
@@ -238,6 +241,28 @@ const goToUserPage = () => {
   }
 };
 
+// Handle Buy Now - check login and cart not empty
+const handleBuyNow = () => {
+  const token = localStorage.getItem("token");
+  
+  // Check if user is logged in
+  if (!token) {
+    alert("Please log in to continue with your purchase.");
+    router.push("/login");
+    return;
+  }
+  
+  // Check if cart is empty
+  if (cartItems.value.length === 0) {
+    alert("Your cart is empty. Please add items before checking out.");
+    return;
+  }
+  
+  // If all checks pass, close sidebar and navigate
+  closeSidebar();
+  router.push("/order-form");
+};
+
 // Price formatting function
 const formatPrice = (price) => {
   if (price === undefined || price === null || isNaN(price)) return "0₫";
@@ -328,3 +353,27 @@ onUnmounted(() => {
     emitter.off('cart-updated', handleCartUpdate);
 });
 </script>
+
+<style scoped>
+.cart-icon-container {
+  display: inline-block;
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  background-color: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+</style>

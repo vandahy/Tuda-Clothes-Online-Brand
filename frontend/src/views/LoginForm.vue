@@ -25,7 +25,7 @@
   </div>
 </template>
 <script>
-import api from "@/api.js";
+import api from "@/utils/api.js";
 
 export default {
   data() {
@@ -43,7 +43,7 @@ export default {
           password: this.password
         });
         if (res.data.success) {
-          alert("Login thành công!");
+          alert("Login successful!");
           localStorage.setItem("userLoggedIn", "true"); 
           localStorage.setItem("username", res.data.username || this.username);
           localStorage.setItem("token", res.data.token || ""); 
@@ -53,7 +53,7 @@ export default {
           this.errorMessage = res.data.message;
         }
       } catch (err) {
-        this.errorMessage = "Lỗi server, thử lại sau";
+        this.errorMessage = "Server error, please try again later";
       }
     }
   }

@@ -1,10 +1,7 @@
 package chubby.teu.tuda.core;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -25,6 +22,7 @@ public class Size {
 
     // Quan hệ 1-n với ProductVariant
     @OneToMany(mappedBy = "size", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<ProductVariant> productVariants;
 
     // Constructor tiện lợi (không bao gồm productVariants để tránh circular reference)

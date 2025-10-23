@@ -21,14 +21,15 @@ const routes = [
     component: () => import('../views/SignUpForm.vue')
   },
   {
-    path: '/order-detail/:id',
+    path: '/order-detail',
     name: 'order-detail',
     component: () => import('../views/OrderDetail.vue')
   },
   {
-    path: '/my-OrderSuccess',
+    path: '/my-OrderSuccess/:orderId',
     name: 'OrderSuccess',
-    component: () => import('../views/OrderSuccess.vue')
+    component: () => import('../views/OrderSuccess.vue'),
+    props: true
   },
   {
     path: '/order-form',
@@ -56,8 +57,11 @@ const routes = [
     name: "ProductDetail",
     component: () => import("../views/ProductDetail.vue"),
     props: true,
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
   }
-
 ]
 
 

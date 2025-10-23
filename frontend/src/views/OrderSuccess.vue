@@ -1,23 +1,22 @@
 <template>
   <div class="order-success">
-    <!-- Icon check -->
     <div class="icon">
-      <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#000000"><path d="M492-80 357-706l-97 461H80v-59h131l112-538h66l135 630 87-383h68l71 291h130v59H704l-58-231-92 396h-62Z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" height="70px" viewBox="0 0 24 24" width="70px" fill="#000000">
+        <path d="M0 0h24v24H0V0z" fill="none"/>
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2.07-4.64l-3.53-3.53 1.41-1.41L9.93 12.5l5.65-5.65 1.41 1.41-7.06 7.07z"/>
+      </svg>
     </div>
 
-    <!-- Title -->
     <h2 class="title">Order Successful!</h2>
 
-    <!-- Message -->
     <p class="message">
       Thank you for your purchase. We will contact you soon to confirm your order.
     </p>
 
-    <!-- Actions -->
     <div class="actions">
       <button
         class="btn btn-outline"
-        @click="toggleSidebarCart"
+        @click="openOrderDetails"
       >
         View Order Details
       </button>
@@ -28,144 +27,54 @@
     </div>
   </div>
 
-  <div v-if="orderDetailForm" class="modal fade show d-block" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content shadow-lg">
-        <div class="modal-header ">
-          <button type="button" class="btn-close" @click="closeSidebar"></button>
-          <h2 class="modal-title fw-bold">Order Details</h2>
-        </div>
-        <div class="modal-body row">
-          <!-- Left: Info + Products -->
-          <div class="col-md-8">
-            <p>
-              Order ID: <a href="#" class="text-decoration-none">{{ orderId }}</a><br>
-              {{ orderDate }} | Sales Staff: {{ staffName }} - {{ staffEmail }}
-            </p>
-
-            <div class="row g-3">
-              <!-- Customer -->
-              <div class="col-md-6">
-                <div class="border p-3 rounded">
-                  <h6 class="fw-bold">CUSTOMER</h6>
-                  <p class="mb-1">{{ customerName }}</p>
-                  <small>{{ customerPhone }}</small>
-                </div>
-              </div>
-              <!-- Recipient -->
-              <div class="col-md-6">
-                <div class="border p-3 rounded">
-                  <h6 class="fw-bold">RECIPIENT</h6>
-                  <p class="mb-1">{{ recipientName }}</p>
-                  <small>{{ recipientPhone }}</small><br>
-                  <small>{{ recipientAddress }}</small>
-                </div>
-              </div>
-            </div>
-
-            <!-- Product list -->
-            <div class="table-responsive mt-4">
-              <table class="table table-bordered table-hover">
-                <thead class="table-light">
-                  <tr>
-                    <th>Product Name</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
-                    <th>Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(item, i) in products" :key="i">
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.qty }}</td>
-                    <td>{{ item.price }} </td>
-                    <td>{{ item.qty * item.price }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Right: Payment -->
-          <div class="col-md-4">
-            <div class="border p-3 rounded bg-light">
-              <h6 class="fw-bold">PAYMENT METHOD</h6>
-              <p>{{ paymentMethod }}</p>
-
-              <hr>
-              <p class="text-success">Promotion: {{ promotion }}</p>
-              <p class="text-success">Shipping Fee: {{ shippingFee }}</p>
-              <p class="text-success">Discount Code: {{ discountCode }}</p>
-              <p class="fw-bold">Subtotal: {{ subtotal }}</p>
-              <p class="text-danger">Total Amount Due: <strong>{{ total }}</strong></p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer buttons -->
-        <div class="modal-footer">
-          <router-link to="/notes" class="btn btn-secondary">Notes</router-link>
-          <router-link to="/edit-order/123" class="btn btn-warning">Edit Order</router-link>
-          <router-link to="/cancel-order/123" class="btn btn-danger">Cancel Order</router-link>
-          <router-link to="/" class="btn btn-primary">Close</router-link>
-        </div>
-      </div>
-    </div>
-  </div>
+  <OrderDetailModal
+    :isVisible="!!viewingOrder" 
+    @close="closeModal"
+    
+    :orderId="viewingOrder?.orderId"
+    :orderDate="viewingOrder?.orderDate"
+    :staffName="viewingOrder?.staffName"
+    :staffEmail="viewingOrder?.staffEmail"
+    :customerName="viewingOrder?.customerName"
+    :customerPhone="viewingOrder?.customerPhone"
+    :recipientName="viewingOrder?.recipientName"
+    :recipientPhone="viewingOrder?.recipientPhone"
+    :recipientAddress="viewingOrder?.recipientAddress"
+    :products="viewingOrder?.products"
+    :paymentMethod="viewingOrder?.paymentMethod"
+    :shippingFee="viewingOrder?.shippingFee"
+    :discountAmount="viewingOrder?.discountAmount"
+    :subtotal="viewingOrder?.subtotal"
+    :total="viewingOrder?.total"
+  />
 </template>
 
-<script>
-import '../assets/css/checkout.css'
-import { ref } from 'vue'
-export default {
-  name: "OrderSuccess",
-  props: {
-    orderId: {
-      type: Number,
-      required: true
-    }
-  },
-  data() {
-    return {
-      orderId: "",
-      orderDate: "",
-      staffName: "",
-      staffEmail: "",
-      customerName: "",
-      customerPhone: "",
-      recipientName: "",
-      recipientPhone: "",
-      recipientAddress: "",
-      products: [], // empty list
-      paymentMethod: "",
-      promotion: "",
-      shippingFee: "",
-      discountCode: "",
-      subtotal: "",
-      total: ""
-    }
-  },
-    methods: {
-      closeModal() {
-        // Close modal logic here
-      }
-    },
-    setup() {
-  
-    const orderDetailForm = ref(false)
+<script setup>
+import { onMounted } from 'vue'
+import { useOrderHistory } from '../composables/userOrderHistory'
+import OrderDetailModal from '../components/OrderDetailModal.vue'
 
-    const toggleSidebarCart = () => {
-      orderDetailForm.value = !orderDetailForm.value
-    }
-    
-    const closeSidebar = () => {
-      orderDetailForm.value = false
-    }
+onMounted(() => {
+  console.log('OrderSuccess mounted - props.orderId =', props.orderId)
+})
 
-    return { orderDetailForm, closeSidebar, toggleSidebarCart }
-
-    }
+// --- 1. PROPS ---
+const props = defineProps({
+  orderId: { 
+    type: String,
+    required: true
   }
+})
+
+const {
+  viewingOrder,     
+  viewOrderDetails, 
+  closeModal        
+} = useOrderHistory()
+
+const openOrderDetails = () => {
+  viewOrderDetails(props.orderId)
+}
 </script>
 
 <style scoped>
@@ -182,8 +91,10 @@ export default {
 }
 
 .icon {
-  font-size: 70px;
   margin-bottom: 15px;
+}
+.icon svg {
+  fill: #000000;
 }
 
 .title {
@@ -221,11 +132,20 @@ export default {
   background: #fff;
   color: #555;
 }
+.btn-outline:hover {
+  background: #f4f4f4;
+}
 
 .btn-primary {
   background: black;
   color: #fff;
   border: 1px solid black;
 }
+.btn-primary:hover {
+  opacity: 0.8;
+}
 
+.modal.show {
+  display: block;
+}
 </style>

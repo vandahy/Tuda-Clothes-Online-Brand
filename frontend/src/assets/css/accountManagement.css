@@ -1,0 +1,425 @@
+/* --- 1. BỐ CỤC TỔNG THỂ (MỚI) --- */
+.account-page-bg {
+    background-color: #f8f9fa;
+    /* Màu nền mờ */
+    padding: 50px 0;
+    min-height: 100vh;
+}
+
+.container-management {
+    max-width: 1100px;
+    /* Tăng chiều rộng để chứa sidebar */
+    margin: 50px auto;
+    /* Căn giữa, bỏ margin-top cũ */
+    background-color: #fff;
+    padding: 48px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.07);
+    border-radius: 8px;
+    /* Thêm bo góc */
+    font-family: Arial, sans-serif;
+}
+
+.h1-account {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.account-layout {
+    display: flex;
+    gap: 32px;
+    /* Khoảng cách giữa sidebar và nội dung */
+}
+
+/* --- 2. SIDEBAR MENU (MỚI) --- */
+.account-sidebar {
+    flex-basis: 250px;
+    /* Chiều rộng cố định cho sidebar */
+    flex-shrink: 0;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    /* Để bo góc cho item đầu/cuối */
+}
+
+.sidebar-item {
+    padding: 18px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #555;
+    font-size: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.2s ease;
+}
+
+.sidebar-item:last-child {
+    border-bottom: none;
+}
+
+.sidebar-item:hover {
+    background-color: #f9f9f9;
+    color: orange;
+}
+
+.sidebar-item.active {
+    background-color: #fff;
+    color: orange;
+    font-weight: 700;
+    border-left: 4px solid orange;
+    /* Tạo điểm nhấn active */
+    padding-left: 16px;
+}
+
+/* --- 3. NỘI DUNG BÊN PHẢI (CHỈNH SỬA) --- */
+.account-content {
+    flex-grow: 1;
+    /* Tự động lấp đầy không gian còn lại */
+}
+
+.card {
+    /* Bỏ min-height, để nội dung tự co giãn */
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border: 1px solid #eee;
+    /* Thêm viền nhẹ cho card */
+    padding: 24px;
+    border-radius: 8px;
+}
+
+.content-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 10px;
+}
+
+/* --- 4. STYLE FORM (GIỮ NGUYÊN TỪ CODE CỦA BẠN) --- */
+.form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+.info-form {
+    grid-template-columns: 1fr 1fr;
+}
+
+.security-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.security-form .full-width {
+    grid-column: span 2;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 6px;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+input,
+select {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.full-width {
+    grid-column: 1;
+}
+
+.info-form .full-width {
+    grid-column: span 2;
+}
+
+.update-button {
+    grid-column: span 2;
+    padding: 12px 20px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.update-button:hover {
+    background-color: black;
+}
+
+/* --- XÓA STYLE CŨ (KHÔNG CẦN NỮA) --- */
+.tabs,
+.tab {
+    display: none;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+@media (max-width: 10px) {
+    .table-responsive {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+.table th,
+.table td {
+    padding: 14px 10px;
+    /* Tăng khoảng cách */
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+    text-align: left;
+    /* Căn trái mặc định */
+}
+
+.table th {
+    font-weight: 600;
+    color: #333;
+    background-color: #f8f9fa;
+    /* Màu nền header */
+}
+
+/* Căn lề cho các cột */
+.table .text-end {
+    text-align: right;
+}
+
+.table .text-center {
+    text-align: center;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Style cho nút "Xem chi tiết" */
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-sm:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.4em 0.8em;
+    font-size: 0.85em;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.375rem;
+}
+
+.status-pending {
+    background-color: #ffc107;
+    color: #000;
+}
+
+/* Vàng */
+.status-confirmed {
+    background-color: #0dcaf0;
+    color: #000;
+}
+
+/* Xanh dương nhạt */
+.status-shipping {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+/* Xanh dương đậm */
+.status-completed {
+    background-color: #198754;
+    color: #fff;
+}
+
+/* Xanh lá */
+.status-cancelled {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* Đỏ */
+.status-default {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+/* --- TABLE STYLES (MỚI) --- */
+
+/* Container cho table với scroll */
+.table-responsive {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Sticky header khi scroll */
+.table-responsive .table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Style cho table */
+.order-history-table {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.order-history-table thead {
+    background-color: #f8f9fa;
+}
+
+.order-history-table th {
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 15px;
+    color: #333;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.order-history-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
+    word-break: break-word;
+}
+
+.order-history-table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+/* Scrollbar styling */
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Badge styles */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+/* Button styles */
+.btn-outline-dark {
+    border: 1px solid #333;
+    color: #333;
+    background-color: transparent;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-dark:hover {
+    background-color: #333;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Empty state */
+.empty-orders {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    padding: 50px 20px;
+}
+
+.empty-orders img {
+    margin-bottom: 15px;
+    width: 100px;
+    opacity: 0.5;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #333;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
