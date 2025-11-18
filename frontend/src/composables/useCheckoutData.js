@@ -58,7 +58,7 @@ export function useCheckoutData() {
 
             products.value = data.items.map(item => ({
                 name: item.productName || 'Product Name',
-                price: Number(item.price) || 0,
+                price: Number(item.price) || 0, // Đơn giá từ backend
                 quantity: Number(item.quantity) || 1,
                 imageUrl: item.imageUrl || '/images/placeholder.png',
                 size: item.size || '',

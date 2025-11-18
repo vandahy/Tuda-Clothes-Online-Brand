@@ -142,6 +142,7 @@ const fetchCartItems = async () => {
     const response = await api.get('/api/cart-items/slide-bar');
     cartItems.value = response.data;
     console.log("Cart items received:", cartItems.value); // Debug log
+    console.log("First item details:", cartItems.value[0]); // Debug từng item
     calculateTotal(); // Calculate total after fetching
   } catch (error) {
     console.error('Error fetching cart items:', error);
@@ -161,10 +162,10 @@ const fetchCartItems = async () => {
 // Function to calculate the total price of the cart
 const calculateTotal = () => {
   cartTotal.value = cartItems.value.reduce((sum, item) => {
-    // Ensure 'item.price' exists and is a number.
-    // This 'price' should be the TOTAL price for that item line (unit price * quantity)
-    // coming directly from your DTO.
-    return sum + (Number(item.price) || 0);
+    // item.price là ĐơN GIÁ từ backend, cần nhân với quantity
+    const itemPrice = Number(item.price) || 0;
+    const itemQuantity = Number(item.quantity) || 1;
+    return sum + (itemPrice * itemQuantity);
   }, 0);
   console.log("Calculated cart total:", cartTotal.value); // Debug log
 };
