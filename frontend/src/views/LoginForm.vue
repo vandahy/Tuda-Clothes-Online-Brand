@@ -25,7 +25,7 @@
   </div>
 </template>
 <script>
-import api from "@/api.js";
+import api from "@/utils/api.js";
 
 export default {
   data() {
