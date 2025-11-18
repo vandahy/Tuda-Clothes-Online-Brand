@@ -50,8 +50,7 @@ public class CartItemServiceImpl implements CartItemService {
 
             String imageUrl = findPrimaryImageUrl(product.getImages());
             BigDecimal unitPrice = product.getPrice().subtract(product.getDiscount());
-            BigDecimal lineTotalPrice = unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
-            double priceAsDouble = lineTotalPrice.doubleValue();
+            double priceAsDouble = unitPrice.doubleValue(); // Trả về đơn giá, không phải tổng
 
             String sizeName = variant.getSize().getName();
 
@@ -117,11 +116,8 @@ public class CartItemServiceImpl implements CartItemService {
                 .findByCart_CartCodeAndVariant_VariantId(cart.getCartCode(), variantId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng"));
 
-        //Cập nhật số lượng và giá
+        //Cập nhật số lượng (giá đơn không đổi)
         item.setQuantity(newQuantity);
-        BigDecimal unitPrice = item.getVariant().getProduct().getPrice()
-                .subtract(item.getVariant().getProduct().getDiscount());
-        item.setPrice(unitPrice.multiply(BigDecimal.valueOf(newQuantity)));
 
         cartItemRepository.save(item);
     }
