@@ -1,6 +1,6 @@
 package chubby.teu.tuda.infrastructure.config;
 
-import chubby.teu.tuda.feature.auth.Component.JwtTokenProvider;
+import chubby.teu.tuda.feature.auth.component.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +13,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
-import java.util.ArrayList; // Cần import cái này
 import java.util.Collections;
 
 @Component // Rất quan trọng!

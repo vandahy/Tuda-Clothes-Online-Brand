@@ -28,7 +28,10 @@ public interface CartItemRepository extends JpaRepository<CartItem, CartItem.Car
             @Param("variantId") Integer variantId
     );
 
-    // 🔹 Xóa toàn bộ item trong 1 giỏ hàng
+    // Xóa toàn bộ item trong 1 giỏ hàng
     @Transactional
     void deleteByCart_CartCode(String cartCode);
+
+    @Query("SELECT ci FROM CartItem ci WHERE ci.cart.cartCode = :cartCode")
+    List<CartItem> getItems(@Param("cartCode") String cartCode);
 }

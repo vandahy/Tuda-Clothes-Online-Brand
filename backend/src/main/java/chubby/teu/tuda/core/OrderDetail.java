@@ -26,6 +26,11 @@ public class OrderDetail {
     @JoinColumn(name = "productCode", nullable = false)
     private Product product;
 
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "variantId", nullable = false)
+    private ProductVariant variant;
+
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
@@ -44,5 +49,6 @@ public class OrderDetail {
     public static class OrderDetailId implements Serializable {
         private String order;
         private String product;
+        private Integer variant;
     }
 }

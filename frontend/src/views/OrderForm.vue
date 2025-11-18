@@ -5,7 +5,6 @@
 
       <div class="row gx-4 gy-4">
         
-        <!-- LEFT: products + forms (2/3) -->
         <div class="col-lg-8">
           <h1 class="mb-4 font-bold text-black">
             TudaBrand — Checkout
@@ -43,20 +42,14 @@
             <div class="card-body">
               <h3 class="card-title">Shipping Information</h3>
               <div class="row g-2">
-                <div class="col-md-6">
+                <div class="col-12 mt-2">
                   <input v-model="customer.firstName" type="text" class="form-control" placeholder="First Name *" />
-                </div>
-                <div class="col-md-6">
-                  <input v-model="customer.lastName" type="text" class="form-control" placeholder="Last Name *" />
                 </div>
                 <div class="col-12 mt-2">
                   <input v-model="customer.email" type="email" class="form-control" placeholder="Email *" />
                 </div>
                 <div class="col-12 mt-2">
                   <input v-model="customer.phone" type="tel" class="form-control" placeholder="Phone Number *" />
-                </div>
-                <div class="col-12 mt-2">
-                  <input v-model="customer.company" type="text" class="form-control" placeholder="Company (optional)" />
                 </div>
               </div>
             </div>
@@ -67,24 +60,32 @@
             <div class="card-body">
               <h3 class="card-title">Shipping Address</h3>
               <div class="mb-2">
-                <input v-model="customer.address" class="form-control" placeholder="Address *" />
+                <input v-model="customer.address" class="form-control" placeholder="Address: *25/5B đường số 9" />
               </div>
               <div class="mb-2">
-                <input v-model="customer.apartment" class="form-control" placeholder="Apartment / Room (optional)" />
+                <select id="province" v-model="selectedProvinceCode" @change="onProvinceChange" class="form-control">
+                  <option value="" disabled>-- Chọn Tỉnh/Thành phố --</option>
+                  <option 
+                    v-for="province in provinces" 
+                    :key="province.Code" 
+                    :value="province.Code"
+                  >
+                    {{ province.FullName }}
+                  </option>
+                </select>
               </div>
-              <div class="row g-2">
-                <div class="col-md-4">
-                  <input v-model="customer.city" class="form-control" placeholder="City *" />
-                </div>
-                <div class="col-md-4">
-                  <input v-model="customer.state" class="form-control" placeholder="State *" />
-                </div>
-                <div class="col-md-4">
-                  <input v-model="customer.zip" class="form-control" placeholder="Postal Code *" />
-                </div>
-              </div>
-              <div class="mt-2">
-                <input v-model="customer.country" class="form-control" placeholder="Country *" />
+              <div class="mb-2">
+                <select 
+                  id="ward" 
+                  v-model="selectedWardCode" 
+                  :disabled="!selectedProvinceCode"
+                  class="form-control"
+                >
+                  <option value="" disabled>-- Chọn Phường/Xã --</option>
+                  <option v-for="ward in wards" :key="ward.Code" :value="ward.Code">
+                    {{ ward.FullName }}
+                  </option>
+                </select>
               </div>
             </div>
           </div>
@@ -96,12 +97,12 @@
 
               <div class="mb-3">
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" id="payCard" value="card" v-model="payment.method">
+                  <input class="form-check-input" type="radio" id="payCard" value="BANK" v-model="payment.method">
                   <label class="form-check-label" for="payCard">Credit/Debit Card</label>
                 </div>
                 <div class="form-check">
-                  <input class="form-check-input" type="radio" id="payPaypal" value="paypal" v-model="payment.method">
-                  <label class="form-check-label" for="payPaypal">PayPal</label>
+                  <input class="form-check-input" type="radio" id="payPaypal" value="MOMO" v-model="payment.method">
+                  <label class="form-check-label" for="payPaypal">Momo</label>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" id="payCod" value="cod" v-model="payment.method">
@@ -160,79 +161,61 @@
                 <span class="text-black">{{ total.toLocaleString() }}₫</span>
               </div>
 
-              <router-link to="my-OrderSuccess" class="btn btn-primary">Place Order</router-link>
+              <button @click="placeOrder" class="btn btn-primary w-100">Place Order</button>
             </div>
           </div>
         </div>
-
       </div> <!-- row -->
     </div> <!-- container -->
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import '../assets/css/checkout.css'
+import { useCheckoutData } from '../composables/useCheckoutData'
+import { usePlaceOrder } from '../composables/placeOrder.js'
+import vietnamData from '../assets/json/address_data.json'
 
-const products = ref([])
-const customer = ref({
-  firstName: '', lastName: '', email: '', phone: '',
-  company: '', address: '', apartment: '',
-  city: '', state: '', zip: '', country: 'Vietnam'
-})
+const provinces = ref([])
+const wards = ref([])
 
-const payment = ref({
-  method: 'cod', cardName: '', cardNumber: '', expiry: '', cvv: ''
-})
-
-const voucherCode = ref('')
-const voucherMessage = ref('')
-const discount = ref(0)
+const selectedProvinceCode = ref('')
+const selectedWardCode = ref('')
 
 onMounted(() => {
-  products.value = (JSON.parse(localStorage.getItem('orderProducts')) || []).map(p => ({
-    ...p,
-    price: Number(p.price) || 0,
-    quantity: Number(p.quantity) || 1,
-    imageUrl: p.imageUrl || p.image || '/images/placeholder.png'
-  }))
+  provinces.value = vietnamData
 })
 
-const subtotal = computed(() =>
-    products.value.reduce((s, it) => s + it.price * (it.quantity || 1), 0)
-)
-
-const total = computed(() => subtotal.value - discount.value)
-
-function applyVoucher() {
-  const code = voucherCode.value.trim().toUpperCase()
-  if (code === 'SALE10') {
-    discount.value = Math.round(subtotal.value * 0.1)
-    voucherMessage.value = '🎉 SALE10 applied: 10% off!'
-  } else if (code === 'FREESHIP') {
-    discount.value = 20000
-    voucherMessage.value = '🚚 FREESHIP applied: 20,000₫ off!'
-  } else {
-    discount.value = 0
-    voucherMessage.value = '❌ Invalid voucher code'
-  }
+const onProvinceChange = () => {
+  const selectedProvince = provinces.value.find(p => p.Code === selectedProvinceCode.value)
+  wards.value = selectedProvince ? selectedProvince.Wards : []
+  selectedWardCode.value = ''
 }
 
-function increaseQty(i) { products.value[i].quantity = (products.value[i].quantity || 1) + 1 }
+const {
+  products,
+  customer,
+  payment,
+  voucherCode,
+  voucherMessage,
+  discount,
+  cartCode, 
+  subtotal,
+  total,
+  applyVoucher,
+  increaseQty,
+  decreaseQty,
+  fetchCheckoutData
+} = useCheckoutData();
 
-function decreaseQty(i) {
-  if ((products.value[i].quantity || 1) > 1) products.value[i].quantity -= 1
-}
+// Fetch checkout data khi component mount
+onMounted(() => {
+  fetchCheckoutData();
+});
 
-function placeOrder() {
-  if (!customer.value.firstName || !customer.value.lastName || !customer.value.phone || !customer.value.address) {
-    alert('❌ Please fill in all required shipping information')
-    return
-  }
-  alert('✅ Order placed successfully!\n' +
-      'Customer: ' + customer.value.firstName + ' ' + customer.value.lastName + '\n' +
-      'Products: ' + products.value.map(p => `${p.name} x${p.quantity}`).join(', ') + '\n' +
-      'Total: ' + total.value.toLocaleString() + '₫' + '\n' +
-      'Payment method: ' + payment.value.method)
-}
+const {
+  placeOrder,
+  isPlacingOrder
+} = usePlaceOrder(customer, payment, cartCode, selectedProvinceCode, selectedWardCode, provinces, wards);
 </script>
