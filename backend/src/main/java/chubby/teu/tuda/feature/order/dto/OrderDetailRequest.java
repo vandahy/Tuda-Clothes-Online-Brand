@@ -34,11 +34,11 @@ public class OrderDetailRequest {
 
     // Constructor with all 13 fields (including items)
     public OrderDetailRequest(String orderCode, LocalDateTime orderDate, String orderStatus,
-            String customerName, String customerPhone, String customerAddress,
-            String paymentMethod, String paymentStatus,
-            BigDecimal subtotal, BigDecimal shippingFee,
-            BigDecimal discountAmount, BigDecimal totalAmount,
-            List<OrderItemRequest> items) {
+                              String customerName, String customerPhone, String customerAddress,
+                              String paymentMethod, String paymentStatus,
+                              BigDecimal subtotal, BigDecimal shippingFee,
+                              BigDecimal discountAmount, BigDecimal totalAmount,
+                              List<OrderItemRequest> items) {
         this.orderCode = orderCode;
         this.orderDate = orderDate;
         this.orderStatus = orderStatus;
@@ -56,10 +56,10 @@ public class OrderDetailRequest {
 
     // Constructor with 12 fields (without items - for JPQL query)
     public OrderDetailRequest(String orderCode, LocalDateTime orderDate, String orderStatus,
-            String customerName, String customerPhone, String customerAddress,
-            String paymentMethod, String paymentStatus,
-            BigDecimal subtotal, BigDecimal shippingFee,
-            BigDecimal discountAmount, BigDecimal totalAmount) {
+                              String customerName, String customerPhone, String customerAddress,
+                              String paymentMethod, String paymentStatus,
+                              BigDecimal subtotal, BigDecimal shippingFee,
+                              BigDecimal discountAmount, BigDecimal totalAmount) {
         this.orderCode = orderCode;
         this.orderDate = orderDate;
         this.orderStatus = orderStatus;

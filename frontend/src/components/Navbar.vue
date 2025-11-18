@@ -58,7 +58,6 @@
         <li><a class="a-menu" href="">NEW ARRIVALS</a></li>
         <li><a class="a-menu" href="">NEWS</a></li>
         <li><a class="a-menu" href="">CONTACT US</a></li>
-        <router-link class="a-menu " to="/Usermanager">Usermanager</router-link>
       </ul>
     </div>
     <!-- Sidebar Menu -->
