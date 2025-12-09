@@ -12,7 +12,11 @@ public class CategoryMapper {
     public static CategoryDTO toDTO(Category category) {
         return new CategoryDTO(
                 category.getCategoryCode(),
-                category.getName()
+                category.getName(),
+                category.getDescription(),
+                category.getStatus() != null ? category.getStatus().name() : "ACTIVE",
+                category.getCreatedAt(),
+                category.getUpdatedAt()
         );
     }
     public List<CategoryDTO> toDTOList(List<Category> categories) {

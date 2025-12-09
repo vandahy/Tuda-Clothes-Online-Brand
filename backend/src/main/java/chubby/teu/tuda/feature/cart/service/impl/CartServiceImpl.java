@@ -64,9 +64,8 @@ public class CartServiceImpl implements CartService {
             existingItem.setQuantity(newQuantity);
 
             BigDecimal unitPrice = variant.getProduct().getPrice().subtract(variant.getProduct().getDiscount());
-            BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(newQuantity));
-
-            existingItem.setPrice(totalPrice);
+            // Lưu đơn giá, KHÔNG lưu tổng giá
+            existingItem.setPrice(unitPrice);
 
             cartItemRepository.save(existingItem);
         } else {
@@ -76,9 +75,8 @@ public class CartServiceImpl implements CartService {
             newItem.setQuantity(requestDTO.getQuantity());
 
             BigDecimal unitPrice = variant.getProduct().getPrice().subtract(variant.getProduct().getDiscount());
-            BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(requestDTO.getQuantity()));
-
-            newItem.setPrice(totalPrice);
+            // Lưu đơn giá, KHÔNG lưu tổng giá
+            newItem.setPrice(unitPrice);
 
             cartItemRepository.save(newItem);
         }

@@ -25,7 +25,10 @@ public class LoginController {
 
         if (success) {
             String token = jwtTokenProvider.generateToken(loginRequest.getUsername());
-            return ResponseEntity.ok(new LoginResponse(true, "Login successful",token));
+            String role = userService.getUserByUsername(loginRequest.getUsername())
+                    .map(user -> user.getRole().name())
+                    .orElse("USER");
+            return ResponseEntity.ok(new LoginResponse(true, "Login successful", token, role));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new LoginResponse(false, "Invalid credentials"));

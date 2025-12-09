@@ -293,6 +293,11 @@ const activeTab = ref('info')
 function logout() {
   localStorage.removeItem('token')
   localStorage.removeItem('user')
+  localStorage.removeItem('userRole') // Xóa role khi logout
+  
+  // Dispatch event để Navbar cập nhật
+  window.dispatchEvent(new Event('userLogout'))
+  
   alert('Logged out successfully!')
   window.location.href = '/'
 }

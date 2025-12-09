@@ -9,10 +9,17 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, String> {
+    
+    /**
+     * Tìm tất cả sản phẩm với images
+     */
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.images")
+    List<Product> findAllWithImages();
     
     /**
      * Tìm sản phẩm theo mã

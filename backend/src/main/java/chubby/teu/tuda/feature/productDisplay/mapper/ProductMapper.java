@@ -1,5 +1,6 @@
 package chubby.teu.tuda.feature.productDisplay.mapper;
 
+import chubby.teu.tuda.feature.productDisplay.dto.CategoryDTO;
 import chubby.teu.tuda.feature.productDisplay.dto.ProductDTO;
 import chubby.teu.tuda.core.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,16 @@ import java.util.stream.Collectors;
 public class ProductMapper {
     @Autowired
     private ProductImageMapper productImageMapper;
+    
+    @Autowired
+    private CategoryMapper categoryMapper;
 
     public ProductDTO toDTO(Product product) {
+        CategoryDTO categoryDTO = null;
+        if (product.getCategory() != null) {
+            categoryDTO = CategoryMapper.toDTO(product.getCategory());
+        }
+        
         return new ProductDTO(
                 product.getProductCode(),
                 product.getName(),
@@ -24,6 +33,9 @@ public class ProductMapper {
                 product.getStockQuantity(),
                 product.getCategory() != null ? product.getCategory().getCategoryCode() : null,
                 product.getCategory() != null ? product.getCategory().getName() : null,
+                categoryDTO,
+                product.getCreatedAt(),
+                product.getUpdatedAt(),
                 (product.getImages() != null && !product.getImages().isEmpty())
                         ? productImageMapper.toDTOList(product.getImages())
                         : Collections.emptyList()

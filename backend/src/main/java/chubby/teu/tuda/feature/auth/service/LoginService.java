@@ -43,5 +43,10 @@ public class LoginService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+    
+    public Optional<User> getUserByUsername(String input) {
+        String normalized = (input == null) ? "" : input.trim();
+        return userRepository.findByUsernameOrEmailOrPhone(normalized, normalized, normalized);
+    }
 
 }
