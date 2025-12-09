@@ -13,6 +13,30 @@ const routes = [
     name: 'UserManager',
     component: UserManager
   },
+  {
+    path: '/category-manager',
+    name: 'CategoryManager',
+    component: () => import('../views/management/CategoryManager.vue'),
+    meta: { requiresAuth: true, roles: ['ADMIN', 'FOUNDER'] }
+  },
+  {
+    path: '/product-manager',
+    name: 'ProductManager',
+    component: () => import('../views/management/ProductManager.vue'),
+    meta: { requiresAuth: true, roles: ['ADMIN', 'FOUNDER', 'EMPLOYEE'] }
+  },
+  {
+    path: '/user-manager',
+    name: 'UserManagerPage',
+    component: () => import('../views/management/UserManager.vue'),
+    meta: { requiresAuth: true, roles: ['ADMIN', 'FOUNDER', 'EMPLOYEE'] }
+  },
+  {
+    path: '/order-manager',
+    name: 'OrderManager',
+    component: () => import('../views/management/OrderManager.vue'),
+    meta: { requiresAuth: true, roles: ['ADMIN', 'FOUNDER', 'EMPLOYEE'] }
+  },
 
 
   {
@@ -77,6 +101,31 @@ const router = createRouter({
       return { top: 0 };
     }
   },
+});
+
+// Navigation guard để kiểm tra quyền truy cập
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  const userRole = localStorage.getItem('userRole');
+  
+  // Kiểm tra nếu route yêu cầu authentication
+  if (to.meta.requiresAuth) {
+    if (!token) {
+      // Chưa đăng nhập -> chuyển về login
+      alert('Please login to access this page');
+      next('/login');
+      return;
+    }
+    
+    // Kiểm tra role nếu route có yêu cầu
+    if (to.meta.roles && !to.meta.roles.includes(userRole)) {
+      alert('You do not have permission to access this page');
+      next('/'); // Chuyển về trang chủ
+      return;
+    }
+  }
+  
+  next(); // Cho phép truy cập
 });
 
 export default router;

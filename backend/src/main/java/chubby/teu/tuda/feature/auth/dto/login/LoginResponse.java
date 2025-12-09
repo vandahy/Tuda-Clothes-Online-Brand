@@ -11,6 +11,7 @@ public class LoginResponse {
     private boolean success;
     private String message;
     private String token;
+    private String role;
 
     public LoginResponse(boolean success, String message) {
         this.success = success;

@@ -14,16 +14,17 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
+
 const currentIndex = ref(0)
 const totalSlides = ref(5)
 let slideInterval = null
 
 const images = [
-  '/src/assets/images/banner/1.jpg',
-  '/src/assets/images/banner/2.jpg',
-  '/src/assets/images/banner/3.jpg',
-  '/src/assets/images/banner/4.jpg',
-  '/src/assets/images/banner/5.jpg'
+  '/images/banner/1.jpg',
+  '/images/banner/2.jpg',
+  '/images/banner/3.jpg',
+  '/images/banner/4.jpg',
+  '/images/banner/5.jpg'
 ]
 
 const showSlide = () => {

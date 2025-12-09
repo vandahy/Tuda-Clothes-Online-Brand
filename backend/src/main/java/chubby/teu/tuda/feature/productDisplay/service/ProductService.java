@@ -25,7 +25,7 @@ public class ProductService {
      * Lấy tất cả sản phẩm
      */
     public List<ProductDTO> getAllProducts() {
-        return productMapper.toDTOList(productRepository.findAll());
+        return productMapper.toDTOList(productRepository.findAllWithImages());
     }
 
     /**

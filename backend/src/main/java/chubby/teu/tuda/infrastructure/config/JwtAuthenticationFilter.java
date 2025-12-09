@@ -1,6 +1,8 @@
 package chubby.teu.tuda.infrastructure.config;
 
+import chubby.teu.tuda.core.User;
 import chubby.teu.tuda.feature.auth.component.JwtTokenProvider;
+import chubby.teu.tuda.feature.auth.repository.LoginRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,12 +16,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Optional;
 
 @Component // Rất quan trọng!
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+    
+    @Autowired
+    private LoginRepository loginRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -40,24 +46,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // 2. Kiểm tra xem token có hợp lệ không
             if (token != null && jwtTokenProvider.validateToken(token)) {
-                // 3. Lấy username từ token (đây chính là "admin@tudabrand.com")
+                // 3. Lấy username từ token
                 String username = jwtTokenProvider.getUsernameFromJWT(token);
 
-                // 4. Tạo một đối tượng xác thực
-                // Ta nói với Spring: "Người này là 'username', không cần pass, không có quyền (Role)"
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        username, // Đây chính là "Principal" mà bạn cần
-                        null,
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")) // Danh sách quyền (Role), để trống
-                );
+                // 4. Lấy user từ database để có role thực
+                Optional<User> userOpt = loginRepository.findByUsernameOrEmailOrPhone(username, username, username);
+                
+                if (userOpt.isPresent()) {
+                    User user = userOpt.get();
+                    String role = user.getRole() != null ? user.getRole().name() : "USER";
+                    
+                    // 5. Tạo authentication với role thực
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            username,
+                            null,
+                            Collections.singletonList(new SimpleGrantedAuthority(role))
+                    );
 
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // 5. ĐẶT NGƯỜI DÙNG NÀY VÀO CONTEXT
-                // Đây là bước quan trọng nhất
-                // Spring Security sẽ thấy cái này và biết là bạn đã đăng nhập
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                logger.info("[DEBUG] Đã xác thực thành công cho user: " + username + " với quyền: " + authentication.getAuthorities());
+                    // 6. ĐẶT NGƯỜI DÙNG NÀY VÀO CONTEXT
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    logger.info("[DEBUG] Đã xác thực thành công cho user: " + username + " với quyền: " + role);
+                }
             }
         } catch (Exception e) {
             // Lỗi (token hỏng, hết hạn...) thì cứ bỏ qua,

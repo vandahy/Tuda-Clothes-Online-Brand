@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -19,5 +20,8 @@ public class ProductDTO {
     private Integer stockQuantity;
     private String categoryCode;
     private String categoryName; // lấy từ Category
+    private CategoryDTO category; // Thêm category object đầy đủ
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private List<ProductImageDTO> images; // Danh sách hình ảnh
 }

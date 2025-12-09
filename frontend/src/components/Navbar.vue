@@ -3,7 +3,7 @@
 
     <nav class="navbar">
       <router-link to="/">
-        <img class="logo w-1/3 flex justify-center" src="/src/assets/images/logo.png" alt="Logo">
+        <img class="logo w-1/3 flex justify-center" src="/images/logo.png" alt="Logo">
       </router-link>
       <ul class="navbar-ul">
         <li class="dropdown">
@@ -12,7 +12,7 @@
             <li>
               <router-link class="a-nav" to="/products">All</router-link>
             </li>
-            <li v-for="category in categories" :key="category.categoryCode">
+            <li v-for="category in activeCategories" :key="category.categoryCode">
               <router-link class="a-nav" :to="`/products?category=${category.categoryCode}`">
                 {{ category.name }}
               </router-link>
@@ -22,6 +22,23 @@
         <li><a class="a-nav" id="nav-products" href="#products-id">NEW ARRIVALS</a></li>
         <li><a class="a-nav" href="">NEWS</a></li>
         <li><a class="a-nav" href="">CONTACT US</a></li>
+        <li v-if="canAccessManagement" class="dropdown">
+          <a class="a-nav" href="">MANAGEMENT</a>
+          <ul class="submenu">
+            <li v-if="isFounder">
+              <router-link class="a-nav" to="/category-manager">Category</router-link>
+            </li>
+            <li>
+              <router-link class="a-nav" to="/product-manager">Product</router-link>
+            </li>
+            <li>
+              <router-link class="a-nav" to="/user-manager">User</router-link>
+            </li>
+            <li>
+              <router-link class="a-nav" to="/order-manager">Order</router-link>
+            </li>
+          </ul>
+        </li>
       </ul>    
     </nav>
 
@@ -48,7 +65,7 @@
             <li>
               <router-link class="a-menu child" to="/products">All</router-link>
             </li>
-            <li v-for="category in categories" :key="category.categoryCode">
+            <li v-for="category in activeCategories" :key="category.categoryCode">
               <router-link class="a-menu child" :to="`/products?category=${category.categoryCode}`">
                 {{ category.name }}
               </router-link>
@@ -58,6 +75,23 @@
         <li><a class="a-menu" href="">NEW ARRIVALS</a></li>
         <li><a class="a-menu" href="">NEWS</a></li>
         <li><a class="a-menu" href="">CONTACT US</a></li>
+        <li v-if="canAccessManagement">
+          <a id="menu-item-mgmt" class="a-menu" href="javascript:void(0)" @click="toggleManagementSubmenu">MANAGEMENT</a>
+          <ul class="submenu-slidebar" id="submenu-mgmt" :class="{ active: managementSubmenuActive }">
+            <li v-if="isFounder">
+              <router-link class="a-menu child" to="/category-manager">Category</router-link>
+            </li>
+            <li>
+              <router-link class="a-menu child" to="/product-manager">Product</router-link>
+            </li>
+            <li>
+              <router-link class="a-menu child" to="/user-manager">User</router-link>
+            </li>
+            <li>
+              <router-link class="a-menu child" to="/order-manager">Order</router-link>
+            </li>
+          </ul>
+        </li>
       </ul>
     </div>
     <!-- Sidebar Menu -->
@@ -107,7 +141,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, onUnmounted } from 'vue';
+import { ref, onMounted, watch, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/utils/api.js'; 
 import emitter from '@/utils/emitter.js';
@@ -117,12 +151,57 @@ const router = useRouter();
 const sidebarActive = ref(false);
 const sidebarCart = ref(false);
 const submenuActive = ref(false);
+const managementSubmenuActive = ref(false);
 const categories = ref([]);
 
 // --- ADD CART STATE ---
 const cartItems = ref([]); // To store cart items from API
 const cartTotal = ref(0);  // To store calculated total price
 // --- END CART STATE ---
+
+// --- CHECK ROLE FOR MANAGEMENT ACCESS ---
+const userRole = ref(localStorage.getItem('userRole'));
+
+// Lắng nghe sự kiện storage để cập nhật role khi logout từ tab khác
+window.addEventListener('storage', (e) => {
+  if (e.key === 'userRole') {
+    userRole.value = e.newValue;
+  }
+});
+
+// Lắng nghe sự kiện custom từ login trong cùng tab
+window.addEventListener('userLogin', (e) => {
+  userRole.value = e.detail.role;
+});
+
+// Lắng nghe sự kiện custom từ logout trong cùng tab
+window.addEventListener('userLogout', () => {
+  userRole.value = null;
+});
+
+const canAccessManagement = computed(() => {
+  const role = userRole.value;
+  return role === 'ADMIN' || role === 'FOUNDER' || role === 'EMPLOYEE';
+});
+
+const isFounder = computed(() => {
+  return userRole.value === 'FOUNDER';
+});
+
+const isAdminOrFounder = computed(() => {
+  const role = userRole.value;
+  return role === 'ADMIN' || role === 'FOUNDER';
+});
+
+const isEmployee = computed(() => {
+  return userRole.value === 'EMPLOYEE';
+});
+
+// Filter only ACTIVE categories for display
+const activeCategories = computed(() => {
+  return categories.value.filter(cat => cat.status === 'ACTIVE');
+});
+// --- END ROLE CHECK ---
 
 // --- CART FUNCTIONS ---
 // Function to fetch cart items from the backend
@@ -218,6 +297,10 @@ const closeSidebar = () => {
 
 const toggleSubmenu = () => {
   submenuActive.value = !submenuActive.value;
+};
+
+const toggleManagementSubmenu = () => {
+  managementSubmenuActive.value = !managementSubmenuActive.value;
 };
 // --- END UI TOGGLE FUNCTIONS ---
 
@@ -344,13 +427,19 @@ const handleCartUpdate = () => {
     fetchCartItems();
 };
 
+const handleCategoriesUpdate = () => {
+    fetchCategories();
+};
+
 onMounted(() => {
     emitter.on('cart-updated', handleCartUpdate);
+    emitter.on('categories-updated', handleCategoriesUpdate);
     fetchCategories(); // Giữ lại dòng này
 });
 
 onUnmounted(() => {
     emitter.off('cart-updated', handleCartUpdate);
+    emitter.off('categories-updated', handleCategoriesUpdate);
 });
 </script>
 

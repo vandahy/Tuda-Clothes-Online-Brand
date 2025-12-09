@@ -47,6 +47,13 @@ export default {
           localStorage.setItem("userLoggedIn", "true"); 
           localStorage.setItem("username", res.data.username || this.username);
           localStorage.setItem("token", res.data.token || ""); 
+          localStorage.setItem("userRole", res.data.role || "USER");
+          
+          // Dispatch event để Navbar cập nhật
+          window.dispatchEvent(new CustomEvent('userLogin', { 
+            detail: { role: res.data.role || "USER" } 
+          }));
+          
           // redirect tới trang home
           this.$router.push("/");
         } else {
