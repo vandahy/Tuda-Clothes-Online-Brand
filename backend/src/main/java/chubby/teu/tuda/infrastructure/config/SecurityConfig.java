@@ -31,7 +31,13 @@ public class SecurityConfig {
 
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOriginPatterns(List.of("*"));
+                    // Allow localhost for development and Railway domains for production
+                    config.setAllowedOriginPatterns(List.of(
+                        "http://localhost:*",
+                        "http://127.0.0.1:*",
+                        "https://*.railway.app",
+                        "https://*.up.railway.app"
+                    ));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(List.of("*"));
                     config.setAllowCredentials(true);
@@ -42,6 +48,8 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // Swagger/OpenAPI endpoints
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/login",
                                 "/api/register")
                         .permitAll()
@@ -64,6 +72,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("ADMIN", "FOUNDER")
                         // Public read-only access (after specific rules)
                         .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/categories/**", "/api/categories").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated());
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
